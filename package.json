@@ -7,7 +7,9 @@
     "node": "~4"
   },
   "scripts": {
-    "test": "node -c server.js && jscs server.js && mocha test/tests.js"
+    "check": "node -c server.js && jscs server.js && node -c test/tests.js && jscs test/tests.js && echo 'OK!' || true",
+    "test": "mocha --reporter spec --bail --check-leaks test/",
+    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --check-leaks test/tests.js"
   },
   "keywords": [
     "javascript",
@@ -23,7 +25,8 @@
   "devDependencies": {
     "jscs": "^2.4.0",
     "mocha": "^2.3.3",
-    "redis-mock": "^0.5.0"
+    "redis-mock": "^0.5.0",
+    "supertest": "^1.1.0"
   },
   "dependencies": {
     "connect-redis": "^3.0.1",
