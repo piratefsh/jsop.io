@@ -7,9 +7,9 @@
     "node": "~4"
   },
   "scripts": {
-    "check": "node -c server.js && jscs server.js && node -c test/tests.js && jscs test/tests.js && echo 'OK!' || true",
+    "check": "node -c index.js && jscs index.js && node -c test/server.js && jscs test/server.js && echo 'OK!' || true",
     "test": "mocha --reporter spec --bail --check-leaks test/",
-    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --check-leaks test/tests.js"
+    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --check-leaks test/"
   },
   "keywords": [
     "javascript",
@@ -26,13 +26,15 @@
     "jscs": "^2.4.0",
     "mocha": "^2.3.3",
     "redis-mock": "^0.5.0",
+    "superagent-mock": "^1.8.0",
     "supertest": "^1.1.0"
   },
   "dependencies": {
     "connect-redis": "^3.0.1",
     "express": "^4.13.3",
     "express-session": "^1.12.0",
+    "ioredis": "^1.10.0",
     "moment": "^2.10.6",
-    "redis": "^2.2.5"
+    "superagent": "^1.4.0"
   }
 }

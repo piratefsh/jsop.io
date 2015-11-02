@@ -1,11 +1,16 @@
 'use strict';
-const express = require('express');
-const run = express.Router();
+const run = require('express').Router();
 
-// retrieve benchmark test for ":id" param
+// autoload benchmark test for ":id" param
 run.param('id', (req, res, next, id) => {
-  req.test = {};
-  next();
+
+  // load benchmark test content
+  req.app.locals.models.benchmark.get(id, (err, benchmark) => {
+
+    // set benchmark attribute
+    req.benchmark = err ? false : benchmark;
+    next();
+  });
 });
 
 // define routes

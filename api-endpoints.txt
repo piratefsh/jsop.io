@@ -1,0 +1,46 @@
+user.json {
+  id: "",
+  name: "",
+  github: "",
+  twitter: "",
+  email: "",
+}
+
+test.json {
+  id: "",
+  title: "",
+  author_id: "",
+  description: "",
+  is_private: false,
+
+  is_imported: false,
+  imported_url: "",
+
+  is_original: true,
+  original_id: "",
+  revisions: [""],
+
+  js_libs: [""],
+  js_libs_meta: [{
+    name: "",
+    version: ""
+  }],
+  html_code: "",
+  js_setup: "",
+  js_teardown: "",
+
+  test_cases: [{
+    label: "",
+    author: {},
+    note: "",
+    js_code: "",
+    is_async: false
+  }]
+}
+
+
+Create new test case.
+POST /new
+  - author
+  - github-md-desc
+  - test object

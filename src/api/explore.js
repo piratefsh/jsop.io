@@ -1,8 +1,5 @@
-var express = require('express');
-var explore = express();
-
-// save reference to root application
-var root; explore.on('mount', app => {root = app;});
+'use strict';
+const explore = require('express').Router({strict: true});
 
 explore.get('/', function(req, res) {
   res.send('explore');

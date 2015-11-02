@@ -1,0 +1,56 @@
+{
+  "id": "example",
+  "title": "Example",
+  "author_id": "harrytruong",
+  "author_name": "Harry Truong",
+  "description_md": "Confirms test runner is functional by benchmarking example test cases. **Markdown is enabled.**",
+  "description_html": "<p>Confirms test runner is functional by benchmarking example test cases. <strong>Markdown is enabled.</strong></p>",
+  "created_at": 0,
+  "updated_at": 0,
+
+  "imported_url": "",
+  "imported_at": 0,
+
+  "benchmark": {
+    "js_scripts": [{
+      "name": "lodash",
+      "version": "3.10.1",
+      "src": "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js",
+      "var": "_"
+    }],
+
+    "html_code": "",
+    "js_setup": "",
+    "js_teardown": "",
+
+    "cases": [{
+      "id": "example-test-string-build",
+      "label": "string build",
+      "author_id": "harrytruong",
+      "author_name": "Harry Truong",
+      "note_md": "uses `+` operator",
+      "note_html": "uses <code>&43;</code> operator",
+      "created_at": 0,
+
+      "js_code": "var str = 'hello' + ' ' + 'world';",
+      "is_async": false,
+
+      "is_default": true,
+      "is_archived": false
+    },{
+      "id": "example-test-string-array-join",
+      "label": "string array join",
+      "author_id": "harrytruong",
+      "author_name": "Harry Truong",
+      "note_md": "uses `array.join()`",
+      "note_html": "uses <code>array.join()</code>",
+      "created_at": 0,
+
+      "js_code": "var str = ['hello', 'world'].join(' ');",
+      "is_async": false,
+
+      "is_default": true,
+      "is_archived": false
+    }]
+  }
+}

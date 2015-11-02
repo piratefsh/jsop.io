@@ -1,85 +1,58 @@
 'use strict';
-const express = require('express');
-const test = express();
+const test = require('express').Router({strict: true});
+
+// saveBenchmark helper: validate, then set (overwriting, if exist)
+const saveBenchmark = (req, res) => {
+  console.log('saving bench');
+
+  // todo: validate
+
+  // save benchmark test content
+  req.app.locals.models.benchmark.set(req.body, err => {
+    // todo: handle err
+  });
+};
 
 // autoload benchmark test for ":id" param
 test.param('id', (req, res, next, id) => {
 
-  // jscs:disable
-  req.test = {
-    id: 'example-test',
-    title: 'Example Test',
-    author_id: 'harrytruong',
-    author_name: 'Harry Truong',
-    description_md: 'Confirms test runner is functional by benchmarking example test cases. **Markdown is enabled.**',
-    description_html: '<p>Confirms test runner is functional by benchmarking example test cases. <strong>Markdown is enabled.</strong></p>',
-    created_at: 0,
-    updated_at: 0,
+  // load benchmark test content
+  req.app.locals.models.benchmark.get(id, (err, benchmark) => {
 
-    imported_url: '',
-    imported_at: 0,
+    // set benchmark attribute
+    req.benchmark = err ? false : benchmark;
+    next();
+  });
+});
 
-    benchmark: {
-      js_scripts: [{
-        name: 'lodash',
-        version: '3.10.1',
-        src: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js',
-        var: '_'
-      }],
+// auto-parse JSON request bodies
+test.use((req, res, next) => {
 
-      html_code: '',
-      js_setup: '',
-      js_teardown: '',
+  // do nothing for non-json or empty bodies
+  if ((req.is('json') && Boolean(req.body)) == false) {
+    return next();
+  }
 
-      cases: [{
-        id: 'example-test-string-build',
-        label: 'string build',
-        author_id: 'harrytruong',
-        author_name: 'Harry Truong',
-        note_md: 'uses `+` operator',
-        note_html: 'uses <code>&43;</code> operator',
-        created_at: 0,
-
-        js_code: 'var str = "hello" + " " + "world";',
-        is_async: false,
-
-        is_default: true,
-        is_archived: false
-      },{
-        id: 'example-test-string-array-join',
-        label: 'string array join',
-        author_id: 'harrytruong',
-        author_name: 'Harry Truong',
-        note_md: 'uses `array.join()`',
-        note_html: 'uses <code>array.join()</code>',
-        created_at: 0,
-
-        js_code: 'var str = ["hello", "world"].join(" ");',
-        is_async: false,
-
-        is_default: true,
-        is_archived: false
-      }]
-    }
-  };
-  // jscs:enable
+  // do json parsing
+  try { req.json = JSON.parse(req.body); }
+  catch (e) { req.json = {}; }
 
   next();
 });
 
-test.get('/:id', (req, res) => {
-  res.json(req.test);
-});
+// create new benchmark test
+test.post('/', saveBenchmark);
 
-test.get('/a', (req, res) => {
-  const redis = req.app.parent.locals.redis;
-  redis.hset('foo','foobar');
-  res.send('benchmark-a');
-});
+// declare all actions for this route
+test.route('/:id')
 
-test.get('/b', (req, res) => {
-  const redis = req.app.parent.locals.redis;
-  res.send(redis.hget('foo'));
-});
+  // return benchmark test
+  .get((req, res) => req.benchmark ?
+    res.json(req.benchmark) :
+    res.status(404).send())
+
+  // update benchmark test
+  .post(saveBenchmark)
+  .put(saveBenchmark);
 
 module.exports = test;

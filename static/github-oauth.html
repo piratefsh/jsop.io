@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>jsop.io</title>
+</head>
+<body onload="start();">
+  <script>
+    function start() {
+      fetch('api/user/csrf', {
+        method: "HEAD",
+        credentials: 'same-origin'
+      }).then(function(res){
+        var csrf = res.headers.get('x-csrf');
+        document.getElementsByTagName('input')[0].value = csrf;
+        document.getElementsByTagName('form')[0].submit();
+      });
+    }
+  </script>
+  <form action="api/user/oauth/github" method="get">
+    <input name="state" value="" />
+    <input name="redirect" value="api/user/profile" />
+  </form>
+</body>
+</html>
