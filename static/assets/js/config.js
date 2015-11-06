@@ -19,7 +19,7 @@ System.config({
     "core-js": "npm:core-js@1.2.5",
     "json": "github:systemjs/plugin-json@0.1.0",
     "lodash": "npm:lodash@3.10.1",
-    "scss": "github:screendriver/plugin-sass@0.0.8",
+    "sass": "github:screendriver/plugin-sass@0.0.8",
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.3.0"
     },

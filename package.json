@@ -52,7 +52,7 @@
     "dependencies": {
       "json": "github:systemjs/plugin-json@^0.1.0",
       "lodash": "npm:lodash@^3.10.1",
-      "scss": "github:screendriver/plugin-sass@^0.0.8"
+      "sass": "github:screendriver/plugin-sass@^0.0.8"
     },
     "devDependencies": {
       "babel": "npm:babel-core@^5.8.24",
