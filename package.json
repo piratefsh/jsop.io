@@ -8,6 +8,8 @@
   },
   "scripts": {
     "postinstall": "jspm install",
+    "jspm": "jspm",
+    "start-dev": "cd static && live-server --no-browser",
     "check": "node -c index.js && jscs index.js && node -c test/server.js && jscs test/server.js && echo 'OK!' || true",
     "test": "mocha --reporter spec --bail --check-leaks test/",
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --check-leaks test/",
@@ -29,6 +31,7 @@
   "devDependencies": {
     "jscs": "^2.4.0",
     "jspm": "^0.16.14",
+    "live-server": "^0.8.2",
     "mocha": "^2.3.3",
     "superagent-mock": "^1.8.0",
     "supertest": "^1.1.0",
@@ -44,13 +47,17 @@
   },
   "jspm": {
     "directories": {
-      "baseURL": "static/assets/js",
-      "packages": "static/assets/js/jspm"
+      "baseURL": "static/assets/js"
     },
     "dependencies": {
       "json": "github:systemjs/plugin-json@^0.1.0",
-      "lodash": "github:lodash/lodash@3.10.1-amd"
+      "lodash": "npm:lodash@^3.10.1",
+      "scss": "github:screendriver/plugin-sass@^0.0.8"
     },
-    "devDependencies": {}
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.8.24",
+      "babel-runtime": "npm:babel-runtime@^5.8.24",
+      "core-js": "npm:core-js@^1.1.4"
+    }
   }
 }

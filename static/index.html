@@ -4,17 +4,87 @@
   <meta charset="UTF-8">
   <title>jsop.io</title>
   <script>
-    var BENCHMARK_JSON = '/api/test/example';
+    var BENCHSPEC = {
+      "id": "example",
+      "title": "Example",
+      "author_id": "harrytruong",
+      "author_name": "Harry Truong",
+      "description_md": "Confirms test runner is functional by benchmarking example test cases. **Markdown is enabled.**",
+      "description_html": "<p>Confirms test runner is functional by benchmarking example test cases. <strong>Markdown is enabled.</strong></p>",
+      "created_at": 0,
+      "updated_at": 0,
+
+      "imported_url": "",
+      "imported_at": 0,
+
+      "benchmark": {
+        "dependencies": [{
+          "name": "lodash",
+          "version": "3.10.0",
+          "src": "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.0/lodash.min.js",
+          "var": "_3100"
+        },{
+          "name": "lodash",
+          "version": "3.10.1",
+          "src": "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js",
+          "var": "_3101"
+        }],
+
+        "html_code": "",
+        "js_setup": "\nwindow.foo = 42;\nvar x = [1, 5, 4, 2, 3];",
+        "js_teardown": "\nwindow.foo = 24;",
+
+        "cases": [{
+          "id": "example-test-err",
+          "label": "err",
+          "author_id": "harrytruong",
+          "author_name": "Harry Truong",
+          "note_md": "",
+          "note_html": "",
+          "created_at": 0,
+
+          "js_code": "throw _3100.VERSION + '|' + _3101.VERSION",
+          "is_async": false,
+
+          "is_default": true,
+          "is_archived": false
+        },{
+          "id": "example-test-alpha",
+          "label": "alpha",
+          "author_id": "harrytruong",
+          "author_name": "Harry Truong",
+          "note_md": "",
+          "note_html": "",
+          "created_at": 0,
+
+          "js_code": "x.sort(function(a, b) {\nreturn a - b;\n});",
+          "is_async": false,
+
+          "is_default": true,
+          "is_archived": false
+        },{
+          "id": "example-test-beta",
+          "label": "beta",
+          "author_id": "harrytruong",
+          "author_name": "Harry Truong",
+          "note_md": "",
+          "note_html": "",
+          "created_at": 0,
+
+          "js_code": "x.sort(function(a, b) {\nreturn a - b;\n});\nreturn;",
+          "is_async": false,
+
+          "is_default": true,
+          "is_archived": false
+        }]
+      }
+    };
   </script>
-  <!-- <script src="benchmark.min.js"></script> -->
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.18.4/system.js"></script> -->
-  <!-- <script src="bar.js"></script> -->
   <script src="assets/js/jsop.bundle.min.js"></script>
-  <script src="assets/js/jspm/system.js"></script>
+  <script src="assets/js/jspm_packages/system.js"></script>
   <script src="assets/js/config.js"></script>
-  <!-- <script src="jsop-runner.min.js"></script> -->
-  <script>System.import('jsop.runner');</script>
-  <!-- <script>System.import('foo');</script> -->
+  <!-- <script>System.import('jsop.runner');</script> -->
+  <script>System.import('example');</script>
 </head>
 <body>
   <p>Hello world.</p>
