@@ -2,14 +2,12 @@
 const test = require('express').Router({strict: true});
 
 // validate create/update of benchmark test spec
-const validateBenchspec = (req, res, next) = {
-
-};
+// const validateBenchspec = (req, res, next) = {
+//
+// };
 
 // save new benchmark test spec
-test.post('/',
-  validateBenchspec,
-  (req, res) =>
+test.post('/', (req, res) =>
   req.benchspec ?
     res.json(req.benchspec) :
     res.status(400).json(req.benchspecErrors));

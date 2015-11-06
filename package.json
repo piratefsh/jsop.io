@@ -7,6 +7,7 @@
     "node": "~4"
   },
   "scripts": {
+    "postinstall": "jspm install",
     "check": "node -c index.js && jscs index.js && node -c test/server.js && jscs test/server.js && echo 'OK!' || true",
     "test": "mocha --reporter spec --bail --check-leaks test/",
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --check-leaks test/",
