@@ -1,22 +1,37 @@
 'use strict';
-const run = require('express').Router();
+const run = require('express').Router({strict: true});
 
-// autoload benchmark test for ":id" param
-run.param('id', (req, res, next, id) => {
+// returns test runner content,
+// based on requested environment type
+run.get('/:type?', (req, res) => {
+  const type = req.params.type || 'browser';
 
-  // load benchmark test content
-  req.app.locals.models.benchmark.get(id, (err, benchmark) => {
+  // redirect, if benchspec not found
+  if (req.benchspec == false) {
+    return res.redirect('/');
+  }
 
-    // set benchmark attribute
-    req.benchmark = err ? false : benchmark;
-    next();
-  });
+  // load test runner based on type
+  switch (type) {
+
+    // browser test runner involves returning
+    // HTML/CSS + jsop.bundle.js + benchspec.json + jsop.runner.js
+    case 'browser':
+
+      return res.render('browser.runner', {
+        benchspec: req.benchspec
+      });
+
+    // non-browser test runner involves returning
+    // jsop.bundle.js + benchspec.json
+    // case 'non-browser':
+  }
+
+  // res.json({
+  //   params: req.params,
+  //   foo: 'bar',
+  //   meh: req.benchspec
+  // });
 });
 
-// define routes
-run.route('/:id')
-    .get((req, res) => {
-      res.json(req.test);
-    });
-
-module.exports = run;
+module.exports = app => run;

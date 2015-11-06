@@ -42,7 +42,7 @@ module.exports = config => {
     sessKey:    config.sessKey    || 'keyboard_cat',
     oauth: {
       githubID:     config.oAuthGHID  || '',
-      githubSecret: config.oAuthGHSrc  || ''
+      githubSecret: config.oAuthGHScr  || ''
     }
   };
 
@@ -58,12 +58,17 @@ module.exports = config => {
   require('./middleware')(app, cfg);
 
   // attach sub-applications
-  app.use(express.static('static'));                      // static page asssets
-  app.use('/run',           require('./run'));        // serve benchmark tests
-  app.use('/api/uptime',    require('./api/uptime')); // api: server stats
-  app.use('/api/user',      require('./api/user'));   // api: auth management
-  app.use('/api/test',      require('./api/test'));   // api: manage tests
-  app.use('/api/explore',   require('./api/explore'));// api: showcase tests
+  app.use(express.static('static'));
+  // app.use('/edit',          require('./edit')(app));
+  app.use('/run/:benchspec?',      require('./run')(app));
+  app.use('/api/test/:benchspec?',require('./api/test')(app));
+  app.use('/api/uptime',          require('./api/uptime')(app));
+  app.use('/api/user',            require('./api/user')(app));
+  app.use('/api/explore',         require('./api/explore')(app));
+  // todo: attach catch-all error handler
+  // app.use((err, req, res, next) => {
+  //   res.status(400).send();
+  // });
 
   // load SSL cert/key for HTTPS
   const fs = require('fs');

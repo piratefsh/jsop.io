@@ -11,4 +11,4 @@ uptime.get('/', function(req, res) {
   });
 });
 
-module.exports = uptime;
+module.exports = app => uptime;

@@ -1,0 +1,5 @@
+{
+  "lodash": "https://github.com/lodash/lodash-compat/raw/3.10.1/lodash.js",
+  "platform": "https://github.com/bestiejs/platform.js/raw/1.3.0/platform.js",
+  "benchmark": "https://github.com/bestiejs/benchmark.js/raw/master/benchmark.js"
+}

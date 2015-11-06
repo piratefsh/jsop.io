@@ -1,58 +1,29 @@
 'use strict';
 const test = require('express').Router({strict: true});
 
-// saveBenchmark helper: validate, then set (overwriting, if exist)
-const saveBenchmark = (req, res) => {
-  console.log('saving bench');
+// validate create/update of benchmark test spec
+const validateBenchspec = (req, res, next) = {
 
-  // todo: validate
-
-  // save benchmark test content
-  req.app.locals.models.benchmark.set(req.body, err => {
-    // todo: handle err
-  });
 };
 
-// autoload benchmark test for ":id" param
-test.param('id', (req, res, next, id) => {
+// save new benchmark test spec
+test.post('/',
+  validateBenchspec,
+  (req, res) =>
+  req.benchspec ?
+    res.json(req.benchspec) :
+    res.status(400).json(req.benchspecErrors));
 
-  // load benchmark test content
-  req.app.locals.models.benchmark.get(id, (err, benchmark) => {
+// return benchmark test spec
+test.get('/', (req, res) =>
+  req.benchspec ?
+    res.json(req.benchspec) :
+    res.status(404).send());
 
-    // set benchmark attribute
-    req.benchmark = err ? false : benchmark;
-    next();
-  });
-});
+// update benchmark test spec
+test.put('/', (req, res) =>
+  req.benchspec ?
+    res.json(req.benchspec) :
+    res.status(400).json(req.benchspecErrors));
 
-// auto-parse JSON request bodies
-test.use((req, res, next) => {
-
-  // do nothing for non-json or empty bodies
-  if ((req.is('json') && Boolean(req.body)) == false) {
-    return next();
-  }
-
-  // do json parsing
-  try { req.json = JSON.parse(req.body); }
-  catch (e) { req.json = {}; }
-
-  next();
-});
-
-// create new benchmark test
-test.post('/', saveBenchmark);
-
-// declare all actions for this route
-test.route('/:id')
-
-  // return benchmark test
-  .get((req, res) => req.benchmark ?
-    res.json(req.benchmark) :
-    res.status(404).send())
-
-  // update benchmark test
-  .post(saveBenchmark)
-  .put(saveBenchmark);
-
-module.exports = test;
+module.exports = app => test;

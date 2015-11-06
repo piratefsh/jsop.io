@@ -1,2 +1,4 @@
 node_modules
+static/assets/js/jspm
 coverage
+npm-debug.log

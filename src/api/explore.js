@@ -5,4 +5,4 @@ explore.get('/', function(req, res) {
   res.send('explore');
 });
 
-module.exports = explore;
+module.exports = app => explore;
