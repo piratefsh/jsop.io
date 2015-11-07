@@ -60,7 +60,7 @@ module.exports = config => {
   // attach sub-applications
   app.use(express.static('static'));
   // app.use('/edit',          require('./edit')(app));
-  app.use('/run/:benchspec?',      require('./run')(app));
+  app.use('/run/:benchspec?',     require('./run')(app));
   app.use('/api/test/:benchspec?',require('./api/test')(app));
   app.use('/api/uptime',          require('./api/uptime')(app));
   app.use('/api/user',            require('./api/user')(app));
