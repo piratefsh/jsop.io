@@ -1,29 +1,29 @@
 'use strict';
-const user = module.exports = require('express').Router({strict: true});
+const user = module.exports = require('express').Router();
 const request = require('superagent');
 const crypto = require('crypto');
 
 // quick load user session status
-user.get('/', (req, res) =>
+user.get('/api/user', (req, res) =>
   req.session.user ?
     res.header('x-user', req.session.user.login).send() :
     res.status(401).send());
 
 // load full user session profile
-user.get('/profile', (req, res) =>
+user.get('/api/user/profile', (req, res) =>
   req.session.user ?
     res.header('x-user', req.session.user.login).json(req.session.user) :
     res.status(401).json({}));
 
 // quick set csrf token in session
-user.get('/csrf', (req, res) =>
+user.get('/api/user/csrf', (req, res) =>
   crypto.randomBytes(4, (ex, buf) => {
     req.session.csrf = buf.toString('hex');
     res.header('x-csrf', req.session.csrf).send();
   }));
 
 // log in user via oauth
-user.get('/oauth/:type',
+user.get('/api/user/oauth/:type',
 
   // pre-oauth housekeeping
   (req, res, next) => {
@@ -149,7 +149,7 @@ user.get('/oauth/:type',
 );
 
 // log out user and clear session
-user.get('/logout', (req, res) => {
+user.get('/api/user/logout', (req, res) => {
   req.session.destroy();
   res.send();
 });

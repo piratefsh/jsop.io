@@ -56,29 +56,14 @@ module.exports = config => {
   app.locals.redis = cfg.redisURI && // redis connection, if available
                      new (require('ioredis'))(cfg.redisURI);
 
-  // attach middleware
-  const middleware = require('./middleware')(app);
-  app.use(middleware.session);
-  app.use(middleware.json);
-  app.use(middleware.logger);
-  app.use(middleware.static);
-  app.use(middleware.helpers);
-
-  // attach routers
-  app.param('bspec', (req, res, next, bspec) => req.loadBspec(bspec, next));
-  app.use('/run/:bspec?',           require('./runner'));
-  app.use('/api/benchmark/:bspec?', require('./api/benchmark'));
-  app.use('/api/user',              require('./api/user'));
+  // attach middleware and routers
+  app.use(require('./middleware')(app));
+  app.use(require('./api/benchmark'));
+  app.use(require('./api/user'));
 
   // attach final, catch-all middleware
-  app.use('/*', (req, res) => {
-    console.log('catch-all-here');
-    res.headersSent || res.sendNotFound();
-  });
-  app.use((err, req, res, next) => {
-    console.log('error-handler-here');
-    res.sendError(err, false);
-  });
+  app.use('/*', (req, res) => res.headersSent || res.sendError(404));
+  app.use((err, req, res, next) => res.sendError(500, err));
 
   // load SSL cert/key for HTTPS
   const fs = require('fs');

@@ -7,8 +7,8 @@
     "node": "~4"
   },
   "scripts": {
-    "check": "node -c index.js && jscs index.js && node -c test/server.js && jscs test/server.js && echo 'OK!' || true",
-    "test": "mocha --reporter spec --bail --check-leaks test/",
+    "check": "jscs -x server.js test src && echo 'OK!' || true",
+    "test": "mocha --reporter dot --bail --check-leaks test/",
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --check-leaks test/",
     "docker-redis": "docker run --rm -p 6379:6379 redis",
     "build-bundle": "cd build && node bundle.js"
@@ -25,6 +25,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "istanbul": "^0.4.0",
     "jscs": "^2.4.0",
     "mocha": "^2.3.3",
     "superagent-mock": "^1.8.0",
