@@ -1,5 +1,5 @@
 'use strict';
-const test = require('express').Router({strict: true});
+const benchmark = module.exports = require('express').Router({strict: true});
 const _ = require('lodash');
 
 // validate create/update of benchmark test spec
@@ -28,25 +28,25 @@ const validateBenchspecResult = (req, res, next) => {
 };
 
 // return benchmark test spec
-test.get('/', (req, res) =>
+benchmark.get('/', (req, res) =>
   req.benchspec ?
     res.json(req.benchspec) :
     res.status(404).send());
 
 // save new benchmark test spec
-test.post('/', validateBenchspec, (req, res) =>
+benchmark.post('/', validateBenchspec, (req, res) =>
   req.benchspec ?
     res.redirect(req.benchspec.id) :
     res.status(400).json({error: req.benchspecErr}));
 
 // update benchmark test spec
-test.put('/', validateBenchspec, (req, res) =>
+benchmark.put('/', validateBenchspec, (req, res) =>
   req.benchspec ?
     res.json(req.benchspec) :
     res.status(400).json({error: req.benchspecErr}));
 
 // return benchmark test result summary
-test.get('/results/:format?', (req, res) => {
+benchmark.get('/results/:format?', (req, res) => {
   const benchspec = req.benchspec || false;
   const format = req.params.format || 'summary';
 
@@ -129,9 +129,7 @@ test.get('/results/:format?', (req, res) => {
 });
 
 // save new benchmark test results
-test.post('/results', validateBenchspecResult, (req, res) =>
+benchmark.post('/results', validateBenchspecResult, (req, res) =>
   req.benchspecResErr ?
     res.status(400).json(req.benchspecResErr) :
     res.send());
-
-module.exports = app => test;

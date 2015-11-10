@@ -1,84 +1,34 @@
 'use strict';
 const fs = require('fs');
+const session = require('express-session');
 
-// attach middleware (e.g., redis, sessions, logging, error handling)
-module.exports = (app, cfg) => {
+module.exports = app => ({
 
-  // prepare quick storage (redis) connection, if available
-  const redis = cfg.redisURI && new (require('ioredis'))(cfg.redisURI);
-  app.locals.redis = redis;
-
-  // attach session middleware (uses redis)
-  const session = require('express-session');
-  app.use(session({
-    secret:             cfg.sessKey,
+  // client session middleware
+  session: session({
+    secret:             app.locals.cfg.sessKey,
     resave:             false,
     saveUninitialized:  false,
     name:               'jsop-session',
     cookie:             {secure: true},
 
-    store:              redis && // use redis storage, if available
+    store:              app.locals.redis && // use redis storage, if available
                         new (require('connect-redis')(session))({
-                          client: redis // re-use existing client
+                          client: app.locals.redis // re-use existing client
                         })
-  }));
+  }),
 
   // auto-parse JSON request bodies
-  app.use((req, res, next) => {
-
-    // do nothing for non-json or empty bodies
-    if ((req.is('json') && Boolean(req.body)) == false) {
-      return next();
+  json: (req, res, next) => {
+    if (req.is('json') && Boolean(req.body)) {
+      try { req.json = JSON.parse(req.body); }
+      catch (e) { req.json = {}; }
     }
-
-    // do json parsing
-    try { req.json = JSON.parse(req.body); }
-    catch (e) { req.json = {}; }
-
     return next();
-  });
+  },
 
-  // autoload benchmark test spec for ":benchspec" param
-  app.param('benchspec', (req, res, next, benchspec) => {
-    const redis = req.app.locals.redis || false;
-    req.benchspec = false; // set default property
-
-    // if available, load benchmark from redis
-    if (redis) {
-
-      // todo...
-    }
-
-    // if available, lookup from S3
-    // if (s3) {
-    // todo...
-    // }
-
-    // lookup from local file cache
-    fs.readFile(
-      'cache/tests/' + benchspec + '.json',
-      'utf8',
-      (err, data) => {
-
-        if (err) {
-          // todo: err handling
-          return next();
-        }
-
-        try { data = JSON.parse(data); }
-        catch (e) { data = false; }
-
-        if (data) {
-          req.benchspec = data;
-        }
-
-        return next();
-      }
-    );
-  });
-
-  // log request metadata
-  app.use((req, res, next) => {
+  // request metadata logger
+  logger: (req, res, next) => {
     const ref = req.get('referer') || false;
 
     if (ref) {
@@ -87,6 +37,72 @@ module.exports = (app, cfg) => {
       // todo: logging
     }
 
-    next();
-  });
-};
+    return next();
+  },
+
+  // serve static files to client
+  static: require('express').static('static', {
+    extensions: ['html']
+  }),
+
+  // request/response helpers
+  helpers: (req, res, next) => {
+
+    // load benchmark spec
+    req.loadBspec = (bspec, next) => {
+      const redis = req.app.locals.redis || false;
+      req.benchspec = false; // set default property
+
+      // if available, load benchmark from redis
+      if (redis) {
+
+        // todo...
+      }
+
+      // if available, lookup from S3
+      // if (s3) {
+      // todo...
+      // }
+
+      // lookup from local file cache
+      fs.readFile(
+        'cache/tests/' + bspec + '.json',
+        'utf8',
+        (err, data) => {
+
+          // todo: err handling?
+          // if (err) {}
+
+          try { req.benchspec = JSON.parse(data); }
+          catch (e) {}
+
+          return next();
+        });
+    };
+
+    // sends generic 404 error response
+    res.sendNotFound = () => {
+
+      // todo: logging
+      console.log('sending not found: ' + req.originalUrl);
+
+      res.status(404).sendFile('static/not-found.html', {
+        root: __dirname + '/../'
+      });
+    };
+
+    // sends generic 500 error response
+    res.sendError = (errPrivate, errPublic) => {
+
+      // todo: logging
+      console.log('sending error: ' + errPrivate);
+
+      // todo: render errPublic error message
+      res.status(500).sendFile('static/uh-oh.html', {
+        root: __dirname + '/../'
+      });
+    };
+
+    return next();
+  }
+});

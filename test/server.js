@@ -128,10 +128,10 @@ describe('jsop.io (default)', () => {
   describe('benchmark tests', () => {
 
     it('returns benchspec json', done => {
-      request.head('/api/test/does-not-exist')
+      request.head('/api/benchmark/does-not-exist')
         .expect(404,
           err => err ? done(err) :
-          request.get('/api/test/example')
+          request.get('/api/benchmark/example')
             .expect('Content-Type', /json/)
             .expect(res => {
               assert.equal(res.body.id, 'example');
@@ -174,10 +174,10 @@ describe('jsop.io (default)', () => {
     it('captures test results');
 
     it('returns test results (summary/raw)', done => {
-      request.head('/api/test/does-not-exist/results')
+      request.head('/api/benchmark/does-not-exist/results')
         .expect(404,
           err => err ? done(err) :
-          request.get('/api/test/example/results')
+          request.get('/api/benchmark/example/results')
             .expect('Content-Type', /json/)
             .expect(res => {
               assert.equal(res.body.id, 'example');
@@ -220,7 +220,7 @@ describe('jsop.io (default)', () => {
             })
             .expect(200,
               err => err ? done(err) :
-              request.get('/api/test/example/results/raw')
+              request.get('/api/benchmark/example/results/raw')
                 .expect('Content-Type', /json/)
                 .expect(res => {
                   assert.equal(res.body.id, 'example');
