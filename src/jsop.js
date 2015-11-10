@@ -31,7 +31,7 @@
  */
 module.exports = config => {
 
-  // setup default config
+  // setup config defaults
   config = config || {};
   const cfg = {
     sslCert:    config.sslCert    || 'insecure.cert',
@@ -46,29 +46,39 @@ module.exports = config => {
     }
   };
 
-  // prepare web server (express)
-  const express = require('express');
-  const app = express();
-  app.locals.cfg = cfg;
+  // prepare express web server
+  const app = require('express')();
   app.set('trust proxy', cfg.trustProxy);
   app.enable('strict routing');
   app.disable('x-powered-by');
 
-  // attach middleware
-  require('./middleware')(app, cfg);
+  app.locals.cfg = cfg; // save runtime config
+  app.locals.redis = cfg.redisURI && // redis connection, if available
+                     new (require('ioredis'))(cfg.redisURI);
 
-  // attach sub-applications
-  app.use(express.static('static'));
-  // app.use('/edit',          require('./edit')(app));
-  app.use('/run/:benchspec?',      require('./run')(app));
-  app.use('/api/test/:benchspec?',require('./api/test')(app));
-  app.use('/api/uptime',          require('./api/uptime')(app));
-  app.use('/api/user',            require('./api/user')(app));
-  app.use('/api/explore',         require('./api/explore')(app));
-  // todo: attach catch-all error handler
-  // app.use((err, req, res, next) => {
-  //   res.status(400).send();
-  // });
+  // attach middleware
+  const middleware = require('./middleware')(app);
+  app.use(middleware.session);
+  app.use(middleware.json);
+  app.use(middleware.logger);
+  app.use(middleware.static);
+  app.use(middleware.helpers);
+
+  // attach routers
+  app.param('bspec', (req, res, next, bspec) => req.loadBspec(bspec, next));
+  app.use('/run/:bspec?',           require('./runner'));
+  app.use('/api/benchmark/:bspec?', require('./api/benchmark'));
+  app.use('/api/user',              require('./api/user'));
+
+  // attach final, catch-all middleware
+  app.use('/*', (req, res) => {
+    console.log('catch-all-here');
+    res.headersSent || res.sendNotFound();
+  });
+  app.use((err, req, res, next) => {
+    console.log('error-handler-here');
+    res.sendError(err, false);
+  });
 
   // load SSL cert/key for HTTPS
   const fs = require('fs');

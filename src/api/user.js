@@ -1,10 +1,7 @@
 'use strict';
-const user = require('express').Router({strict: true});
+const user = module.exports = require('express').Router({strict: true});
 const request = require('superagent');
 const crypto = require('crypto');
-
-// oauth config container
-let oauthConfig = {};
 
 // quick load user session status
 user.get('/', (req, res) =>
@@ -52,6 +49,7 @@ user.get('/oauth/:type',
 
   // perform oauth provider logic
   (req, res, next) => {
+    const oauthConfig = (req.app.locals.cfg || {}).oauth || {};
 
     // github oauth provider logic
     if (req.params.type == 'github' &&
@@ -155,10 +153,3 @@ user.get('/logout', (req, res) => {
   req.session.destroy();
   res.send();
 });
-
-// export final Router middleware,
-// requiring <Express> app instance
-module.exports = app => {
-  oauthConfig = (app.locals.cfg || {}).oauth || {};
-  return user;
-};

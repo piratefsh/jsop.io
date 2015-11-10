@@ -1,14 +1,13 @@
 'use strict';
-const run = require('express').Router({strict: true});
+const runner = module.exports = require('express').Router({strict: true});
 
-// returns test runner content,
-// based on requested environment type
-run.get('/:type?', (req, res) => {
+// benchmark test runner in SEO-friendly format
+runner.get('/:type?', (req, res) => {
   const type = req.params.type || 'browser';
 
-  // redirect, if benchspec not found
+  // ensure benchspec loaded
   if (req.benchspec == false) {
-    return res.redirect('/');
+    return res.sendNotFound();
   }
 
   // load test runner based on type
@@ -26,12 +25,4 @@ run.get('/:type?', (req, res) => {
     // jsop.bundle.js + benchspec.json
     // case 'non-browser':
   }
-
-  // res.json({
-  //   params: req.params,
-  //   foo: 'bar',
-  //   meh: req.benchspec
-  // });
 });
-
-module.exports = app => run;

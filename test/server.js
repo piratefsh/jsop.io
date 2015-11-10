@@ -127,16 +127,45 @@ describe('jsop.io (default)', () => {
 
   describe('benchmark tests', () => {
 
-    it('returns 404 for missing benchmark', done => {
-      request.get('/api/test/does-not-exist')
-        .expect(404, done);
+    it('returns benchspec json', done => {
+      request.head('/api/benchmark/does-not-exist')
+        .expect(404,
+          err => err ? done(err) :
+          request.get('/api/benchmark/example')
+            .expect('Content-Type', /json/)
+            .expect(res => {
+              assert.equal(res.body.id, 'example');
+              assert.equal(typeof res.body.title, 'string');
+
+              var benchmark = res.body.benchmark;
+              assert.equal(typeof benchmark, 'object');
+              assert(benchmark.dependencies instanceof Array);
+              assert.equal(typeof benchmark.js_setup, 'string');
+              assert.equal(typeof benchmark.js_teardown, 'string');
+              assert(benchmark.cases instanceof Array);
+              assert(benchmark.cases.length > 0);
+
+              for (var i = 0; i < benchmark.cases.length; i++){
+                var testcase = benchmark.cases[i];
+                assert.equal(typeof testcase, 'object');
+                assert.equal(typeof testcase.label, 'string');
+                assert.equal(typeof testcase.id, 'string');
+                assert(testcase.id.indexOf(res.body.id) === 0);
+                assert.equal(typeof testcase.js_code, 'string');
+                assert.equal(typeof testcase.is_async, 'boolean');
+                assert.equal(typeof testcase.is_default, 'boolean');
+                assert.equal(typeof testcase.is_archived, 'boolean');
+              }
+            })
+            .expect(200, done)
+        );
     });
 
     it('loads benchmarks from redis > s3 > local cache');
 
-    it('allows anonymous benchmark tests');
+    it('allows create anonymous benchmark tests');
 
-    it('allows saving anon benchmark tests to user');
+    it('allows transfer anon benchmark tests to user');
 
     it('allows updating benchmark tests');
 
@@ -144,9 +173,100 @@ describe('jsop.io (default)', () => {
 
     it('captures test results');
 
-    it('returns summarized test results');
+    it('returns test results (summary/raw)', done => {
+      request.head('/api/benchmark/does-not-exist/results')
+        .expect(404,
+          err => err ? done(err) :
+          request.get('/api/benchmark/example/results')
+            .expect('Content-Type', /json/)
+            .expect(res => {
+              assert.equal(res.body.id, 'example');
 
-    it('returns benchmark test statistics');
+              var summary = res.body.summary;
+              assert.equal(typeof summary, 'object');
+              assert.equal(typeof summary.count, 'number');
+              assert(summary.cases instanceof Array);
+
+              for (var i = 0; i < summary.cases.length; i++){
+                var testcase = summary.cases[i];
+                assert.equal(typeof testcase, 'object');
+                assert.equal(typeof testcase.id, 'string');
+                assert(testcase.id.indexOf(res.body.id) === 0);
+                assert.equal(typeof testcase.aborted, 'number');
+                assert.equal(typeof testcase.hz, 'number');
+                assert.equal(typeof testcase.rme, 'number');
+              }
+
+              var platforms = res.body.platforms;
+              assert(platforms instanceof Array);
+              for (var i = 0; i < platforms.length; i++){
+                var platform = platforms[i];
+                assert.equal(typeof platform, 'object');
+                assert.equal(typeof platform.name, 'string');
+                assert.equal(typeof platform.summary, 'object');
+                assert.equal(typeof platform.summary.count, 'number');
+                assert(platform.summary.cases instanceof Array);
+
+                for (var j = 0; j < platform.summary.cases.length; j++){
+                  var testcase = platform.summary.cases[i];
+                  assert.equal(typeof testcase, 'object');
+                  assert.equal(typeof testcase.id, 'string');
+                  assert(testcase.id.indexOf(res.body.id) === 0);
+                  assert.equal(typeof testcase.aborted, 'number');
+                  assert.equal(typeof testcase.hz, 'number');
+                  assert.equal(typeof testcase.rme, 'number');
+                }
+              }
+            })
+            .expect(200,
+              err => err ? done(err) :
+              request.get('/api/benchmark/example/results/raw')
+                .expect('Content-Type', /json/)
+                .expect(res => {
+                  assert.equal(res.body.id, 'example');
+                  assert(res.body.results instanceof Array);
+
+                  for (var i = 0; i < res.body.results.length; i++){
+                    var result = res.body.results[i];
+                    assert.equal(typeof result, 'object');
+                    assert.equal(typeof result.platform, 'object');
+                    assert.equal(typeof result.platform.name, 'string');
+                    assert.equal(typeof result.platform.version, 'string');
+                    assert(result.cases instanceof Array);
+                    assert(result.cases.length > 0);
+
+                    for (var j = 0; j < result.cases.length; j++){
+                      var testcase = result.cases[i];
+                      assert.equal(typeof testcase, 'object');
+                      assert.equal(typeof testcase.id, 'string');
+                      assert(testcase.id.indexOf(res.body.id) === 0);
+                      assert.equal(typeof testcase.count, 'number');
+                      assert.equal(typeof testcase.cycles, 'number');
+                      assert.equal(typeof testcase.aborted, 'boolean');
+                      assert.equal(typeof testcase.error, 'object');
+                      assert.equal(typeof testcase.hz, 'number');
+
+                      assert.equal(typeof testcase.stats, 'object');
+                      assert.equal(typeof testcase.stats.moe, 'number');
+                      assert.equal(typeof testcase.stats.rme, 'number');
+                      assert.equal(typeof testcase.stats.sem, 'number');
+                      assert.equal(typeof testcase.stats.deviation, 'number');
+                      assert(testcase.stats.sample instanceof Array);
+                      assert(testcase.stats.sample.length > 0);
+                      assert.equal(typeof testcase.stats.sample[0], 'number');
+                      assert.equal(typeof testcase.stats.variance, 'number');
+
+                      assert.equal(typeof testcase.times, 'object');
+                      assert.equal(typeof testcase.times.cycle, 'number');
+                      assert.equal(typeof testcase.times.elapsed, 'number');
+                      assert.equal(typeof testcase.times.timeStamp, 'number');
+                    }
+                  }
+                })
+                .expect(200, done)
+            )
+        );
+    });
 
     describe('platform-specific runners', () => {
 

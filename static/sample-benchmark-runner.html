@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>jsop.io</title>
+  <script>
+    var BENCHSPEC = {
+      "id": "example",
+      "title": "Example",
+      "author_id": "harrytruong",
+      "author_name": "Harry Truong",
+      "description_md": "Confirms test runner is functional by benchmarking example test cases. **Markdown is enabled.**",
+      "description_html": "<p>Confirms test runner is functional by benchmarking example test cases. <strong>Markdown is enabled.</strong></p>",
+      "created_at": 0,
+      "updated_at": 0,
+
+      "imported_url": "",
+      "imported_at": 0,
+
+      "benchmark": {
+        "dependencies": [{
+          "name": "lodash",
+          "version": "3.10.0",
+          "src": "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.0/lodash.min.js",
+          "var": "_3100"
+        },{
+          "name": "lodash",
+          "version": "3.10.1",
+          "src": "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js",
+          "var": "_3101"
+        }],
+
+        "html_code": "",
+        "js_setup": "\nwindow.foo = 42;\nvar x = [1, 5, 4, 2, 3];",
+        "js_teardown": "\nwindow.foo = 24;",
+
+        "cases": [{
+          "id": "example-test-err",
+          "label": "err",
+          "author_id": "harrytruong",
+          "author_name": "Harry Truong",
+          "note_md": "",
+          "note_html": "",
+          "created_at": 0,
+
+          "js_code": "throw _3100.VERSION + '|' + _3101.VERSION",
+          "is_async": false,
+
+          "is_default": true,
+          "is_archived": false
+        },{
+          "id": "example-test-alpha",
+          "label": "alpha",
+          "author_id": "harrytruong",
+          "author_name": "Harry Truong",
+          "note_md": "",
+          "note_html": "",
+          "created_at": 0,
+
+          "js_code": "x.sort(function(a, b) {\nreturn a - b;\n});",
+          "is_async": false,
+
+          "is_default": true,
+          "is_archived": false
+        },{
+          "id": "example-test-beta",
+          "label": "beta",
+          "author_id": "harrytruong",
+          "author_name": "Harry Truong",
+          "note_md": "",
+          "note_html": "",
+          "created_at": 0,
+
+          "js_code": "x.sort(function(a, b) {\nreturn a - b;\n});\nreturn;",
+          "is_async": false,
+
+          "is_default": true,
+          "is_archived": false
+        }]
+      }
+    };
+  </script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/systemjs/0.18.4/system.js"></script>
+  <script src="assets/js/jsop.bundle.min.js"></script>
+  <script>
+    var root = typeof global == "object" && global || this;
+
+    // expect benchmark test to be set
+    // as globally declared variable:
+    // var BENCHMARK_JSON = 'https://jsop.io/api/test/example';
+
+    var spec = BENCHSPEC.benchmark;
+    var deps = spec.dependencies;
+
+    // import benchmark dependencies
+    var imports = [];
+    for (var i = 0; i < deps.length; i++) {
+      imports.push(System.import(deps[i].src));
+    }
+
+    // once all imports are loaded,
+    // setup and run benchmark test.
+    Promise.all(imports).then(function(modules) {
+
+      // make module deps globally available
+      for (var i = 0; i < deps.length; i++){
+        if (modules[i]) root[deps[i].var] = modules[i];
+      }
+
+      // setup benchmark test
+      var benchsuite = new Benchmark.Suite();
+
+      // add test setup/teardown from spec
+      Benchmark.prototype.setup = spec.js_setup;
+      Benchmark.prototype.teardown = spec.js_teardown;
+
+      // collect added testcases
+      var testcases = [];
+      benchsuite.on('add', function(ev){ testcases.push(ev.target); });
+
+      // add testcases from spec
+      for (var i = 0; i < spec.cases.length; i++){
+        benchsuite.add(
+
+          // test case name
+          spec.cases[i].label,
+
+          // test case js code
+          spec.cases[i].js_code,
+
+          { // test case listeners
+            onStart: function(){
+              console.log('-----------------------------------');
+              console.log('Starting testcase: "' + this.name + '"');
+            },
+            onError: function(){
+              console.log('Testcase error: "' + this.error + '"');
+            },
+            onComplete: function(){
+              if (this.error) return;
+              console.log('Testcase finished: ' + String(this));
+            }
+          }
+        );
+      }
+
+      // note test platform
+      console.log('-----------------------------------');
+      console.log('Your platform is:');
+      console.log(Benchmark.platform);
+
+      // run!
+      console.log('-----------------------------------');
+      console.log('Starting benchmark tests!');
+      benchsuite.run({
+        'async': true,
+        'queued': true
+      });
+
+      // collect test reults
+      benchsuite.on('complete', function(){
+
+        // compile complete resultspec
+        var result = {
+          id: BENCHSPEC.id,
+          platform: Benchmark.platform,
+          cases: []
+        };
+
+        for (var i = 0; i < spec.cases.length; i++){
+          var tc = testcases[i];
+          console.log(tc);
+          result.cases.push({
+            id: spec.cases[i].id,
+            count: tc.count,
+            cycles: tc.cycles,
+            aborted: tc.aborted,
+            error: tc.error,
+            hz: tc.hz,
+            stats: tc.stats,
+            times: tc.times
+          });
+        }
+
+        console.log(result);
+      });
+    });
+
+  </script>
+</head>
+<body>
+  <p>Hello world.</p>
+</body>
+</html>
