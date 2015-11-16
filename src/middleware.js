@@ -35,6 +35,15 @@ module.exports = app => [
     return next();
   },
 
+  // enable CORS
+  function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+  },
+
   // json request body parser
   require('body-parser').json(),
 
