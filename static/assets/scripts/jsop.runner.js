@@ -1,3 +1,4 @@
+
 // jscs:disable
 var root = typeof global == "object" && global || this;
 

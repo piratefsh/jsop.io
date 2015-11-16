@@ -1,0 +1,42 @@
+$space: 20px
+
+.container
+    margin: 0 auto
+
+.layout 
+    display: flex
+    > div
+        flex: 2
+        &:first-child
+            flex: 1
+            margin-right: $space*2
+.control
+    margin: $space 0px
+
+.dep-list
+    margin: $space 0px
+    .dep
+        padding: $space/2
+.case-list
+    padding: 0px 
+    margin: $space 0px
+    .case
+        display: block 
+        margin: $space 0px
+
+.form-inline 
+    .form-group
+        margin-right: $space
+
+.form-horizontal
+    .form-group
+        .control-label 
+            @extend .col-sm-12
+            @extend .col-md-3
+        > div
+            @extend .col-sm-12
+            @extend .col-md-9
+
+#edit 
+    section 
+        margin: $space 0px
