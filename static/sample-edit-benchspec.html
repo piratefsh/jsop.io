@@ -13,83 +13,178 @@
 <body>
 
   <div class="container">
-    <h1>Edit Benchspec</h1>
-    <section class="control">
-      <div class="btn-group">
-        <button id="run" class="btn btn-primary" >Run Benchmark</button>
-        <button id="clear" class="btn btn-default" >Clear Benchmark</button>
-        <button id="save" class="btn btn-default" >Save Benchmark</button>
+    <header>
+      <h1>Edit Benchspec</h1>
+      <div class="control">
+        <div class="btn-group">
+          <button id="run" class="btn btn-primary" >Run Benchmark</button>
+          <button id="clear" class="btn btn-default" >Clear Benchmark</button>
+          <button id="save" class="btn btn-default" >Save Benchmark</button>
+        </div>
+      </div>
+
+      <div class="control">
+        <div class="form-inline">
+          <fieldset class="form-group">
+            <label class="control-label">Load Benchmark:</label>
+            <input class="form-control" name="benchspecid" placeholder="example" />
+          </fieldset>
+          <fieldset class="form-group">
+            <button id="load" class="btn btn-default">Load</button>
+          </fieldset>
+        </div>
+      </div>
+      <pre><code></code></pre>
+    </header>
+    <hr />
+
+    <h2>Edit</h2>
+    <div id="edit"></div>
+
+    <!-- Form template -->
+    <script id="bspecform" type="text/template">
+    
+    <!-- Title and description -->
+    <section>
+      <fieldset class="form-group">
+        <label class="control-label">Title:</label>
+        <input class="attr form-control" name="title" value="<%- title %>"/></fieldset>
+
+      <fieldset>
+        <label class="control-label">Description:</label>
+        <textarea class="attr form-control" name="description_md"><%- description_md %></textarea>
+      </fieldset>
+    </section>
+
+      <hr/>
+
+      <!-- Libraries -->
+    <section>
+      <fieldset>
+        <h3>Libaries</h3>
+        <ul class="dep-list">
+          <% _.each(benchmark.dependencies, function(dep, idx){ %>
+          <li class="dep">
+            <%- dep.name %>
+            (
+            <%- dep.version %>
+            )
+            [
+            <a href="<%= dep.src %>">src</a>
+            ] ==> <strong>var
+              <%- dep.var %></strong>
+            <button data-idx="<%- idx %>" class="rmv-dep btn btn-danger pull-right">-</button>
+          </li>
+          <% }) %></ul>
+      </fieldset>
+
+      <h4>Add Library</h4>
+      <div class="form-horizontal">
+        <fieldset class="form-group">
+          <label class="control-label col-sm-12 col-md-3">Name:</label>
+          <div class="col-sm-12 col-md-9">
+            <input class="form-control" name="dep-name" />
+          </div>
+        </fieldset>
+        <fieldset class="form-group">
+          <label class="control-label col-sm-12 col-md-3">Version:</label>
+          <div class="col-sm-12 col-md-9">
+            <input class="form-control" name="dep-version" />
+          </div>
+        </fieldset>
+        <fieldset class="form-group">
+          <label class="control-label col-sm-12 col-md-3">URL:</label>
+          <div class="col-sm-12 col-md-9">
+            <input class="form-control" name="dep-src" />
+          </div>
+        </fieldset>
+        <fieldset class="form-group">
+          <label class="control-label col-sm-12 col-md-3">Var:</label>
+          <div class="col-sm-12 col-md-9">
+            <input class="form-control" name="dep-var" />
+            <button class="add-dep btn btn-default">+</button>
+          </div>
+        </fieldset>
+        <fieldset class="form-group">
+          <label class="control-label col-sm-12 col-md-3">HTML:</label>
+          <div class="col-sm-12 col-md-9">
+            <textarea class="attr form-control" name="html_code"><%- benchmark.html_code %></textarea>
+          </div>
+        </fieldset>
+        <fieldset class="form-group">
+          <label class="control-label col-sm-12 col-md-3">JS Setup:</label>
+          <div class="col-sm-12 col-md-9">
+            <textarea class="attr form-control" name="js_setup"><%- benchmark.js_setup %></textarea>
+          </div>
+        </fieldset>
+        <fieldset class="form-group">
+          <label class="control-label col-sm-12 col-md-3">JS Teardown:</label>
+          <div class="col-sm-12 col-md-9">
+            <textarea class="attr form-control" name="js_teardown"><%- benchmark.js_teardown %></textarea>
+          </div>
+        </fieldset>
       </div>
     </section>
 
-    <section class="control">
-      <form class="form-inline">
+    <section>
+      <!-- Test Cases -->
+      <h3>Test Cases</h3>
+      <ul class="case-list">
+        <% _.each(benchmark.cases, function(c, idx){ %>
+        <li class="case"> <strong><%- c.label %></strong>
+          :
+          <%- c.note_md %>
+          <pre><%- c.js_code %></pre>
+          <div>
+            <%= c.is_async ? "async":"" %>
+            ,
+            <%= c.is_default ? "default":"" %>
+            ,
+            <%= c.is_archived ? "archived":"" %>
+            <button data-idx="<%- idx %>" class="rmv-case btn btn-danger pull-right">-</button>
+          </div>
+        </li>
+        <% }) %></ul>
+
+      <h4>Add Test Case</h4>
+      <div>
         <fieldset class="form-group">
-          <label class="control-label">Load Benchmark:</label>
-          <input class="form-control" name="benchspecid" placeholder="example" />
+          <label class="control-label">Label:</label>
+          <input class="form-control" name="case-label" />
         </fieldset>
         <fieldset class="form-group">
-          <button id="load" class="btn btn-default">Load</button>
+          <label class="control-label">Notes:</label>
+          <input class="form-control" name="case-note_md" />
         </fieldset>
-      </form>
-    </section>
-    <pre><code></code></pre>
+        <fieldset class="form-group">
+          <label class="control-label">
+            JS:
+            <textarea class="form-control" name="case-js_code"></textarea>
+          </label>
+        </fieldset>
+      </div>
 
-    <hr />
+      <div class="form-inline">
+        <fieldset class="form-group">
+          <input class="form-control" type="checkbox" name="case-is_async" />
+          <label class="control-label">async:</label>
+        </fieldset>
+        <fieldset class="form-group">
+          <input class="form-control" type="checkbox" name="case-is_default" />
+          <label class="control-label">default:</label>
+        </fieldset>
+        <fieldset class="form-group">
+          <input class="form-control" type="checkbox" name="case-is_archived" />
+          <label class="control-label">archived</label>
+        </fieldset>
+        <fieldset class="form-group  pull-right">
+          <button class="add-case btn btn-primary">+</button>
+        </fieldset>
+      </div>
+  </section>
 
-    <div id="edit"></div>
-
-    <script id="bspecform" type="text/template">
-    <ul>
-      <li><label>Title: <input class="attr" name="title" value="<%- title %>"/></label></li>
-      <li><label>Description: <textarea class="attr" name="description_md"><%- description_md %></textarea></label></li>
-      <li> <strong>Libaries:</strong>
-        <ul class="dep-list"><% _.each(benchmark.dependencies, function(dep, idx){ %>
-          <li>
-            <%- dep.name %>(<%- dep.version %>)
-            [<a href="<%= dep.src %>">src</a>]
-            ==> <strong>var <%- dep.var %></strong>
-            <button data-idx="<%- idx %>" class="rmv-dep">-</button>
-          </li>
-        <% }) %></ul>
-      </li>
-      <li><fieldset><ul>
-        <li><legend>Add Library</legend></li>
-        <li><label>Name: <input name="dep-name" /></label></li>
-        <li><label>Version: <input name="dep-version" /></label></li>
-        <li><label>URL: <input name="dep-src" /></label></li>
-        <li><label>Var: <input name="dep-var" /></label></li>
-        <li><button class="add-dep">+</button></li>
-      </ul></fieldset></li>
-      <li><label>HTML: <textarea class="attr" name="html_code"><%- benchmark.html_code %></textarea></label></li>
-      <li><label>JS Setup: <textarea class="attr" name="js_setup"><%- benchmark.js_setup %></textarea></label></li>
-      <li><label>JS Teardown: <textarea class="attr" name="js_teardown"><%- benchmark.js_teardown %></textarea></label></li>
-      <li>
-        <strong>Test Cases:</strong>
-        <ul class="case-list"><% _.each(benchmark.cases, function(c, idx){ %>
-          <li>
-            <p><strong><%- c.label %></strong>: <%- c.note_md %></p>
-            <pre><%- c.js_code %></pre>
-            <span><%= c.is_async ? "async":"" %>,
-              <%= c.is_default ? "default":"" %>,
-              <%= c.is_archived ? "archived":"" %></span>
-            <button data-idx="<%- idx %>" class="rmv-case">-</button>
-          </li>
-        <% }) %></ul>
-      </li>
-      <li><fieldset><ul>
-        <li><legend>Add Test Case</legend></li>
-        <li><label>Label: <input name="case-label" /></label></li>
-        <li><label>Notes: <input name="case-note_md" /></label></li>
-        <li><label>JS: <textarea name="case-js_code"></textarea></label></li>
-        <li><label>Is Async: <input type="checkbox" name="case-is_async" /></label></li>
-        <li><label>Is Default: <input type="checkbox" name="case-is_default" /></label></li>
-        <li><label>Is Archived<input type="checkbox" name="case-is_archived" /></label></li>
-        <li><button class="add-case">+</button></li>
-      </ul></fieldset></li>
-    </ul>
   </script>
-  </div>
+  <footer></footer>
   <script src="bundle.js"></script>
 </body>
-</html>
+  </html>
