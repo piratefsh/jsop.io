@@ -53,9 +53,9 @@ var expect = function(val, fn, msg) {
 var rules = {
   benchspec: ruleset({
     title: function(val) {
-      return expect(val, 'matches', 'Alphanumeric characters only.', /[a-z\d ]/i) ||
-      expect(val, 'isLength', 'Cannot be blank.', 1) ||
-      expect(val, 'isLength', '64 character limit.', 1, 64);
+      return expect(val, 'isLength', 'Cannot be blank.', 1) ||
+      expect(val, 'isLength', '64 character limit.', 1, 64) ||
+      expect(val, 'matches', 'Alphanumeric characters only.', /[a-z\d ]/i);
     },
     description_md: function(val) {
       return expect(val, 'isLength', '2048 character limit.', 0, 2048);
@@ -79,6 +79,12 @@ var rules = {
       return expect(val, 'isLength', '10240 character limit.', 0, 10240);
     },
     cases: function(val) {
+      if (val instanceof Array == false) {
+        return 'Must be an array.';
+      } else if (val.length == 0) {
+        return 'Must have at least one test case.';
+      }
+
       var errors = _.filter(_.map(val, rules.benchcase));
       return errors.length ? errors : undefined;
     },

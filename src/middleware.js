@@ -35,14 +35,11 @@ module.exports = app => [
     return next();
   },
 
+  // json request body parser
+  require('body-parser').json(),
+
   // request/response helpers
   (req, res, next) => {
-
-    // auto-parse JSON request bodies (for HTTP POST/PUT)
-    if ((req.method == 'POST' || req.method == 'PUT') &&
-      req.is('json') && Boolean(req.body)) {
-      req.json = JSON.parse(req.body);
-    }
 
     // helper: logs and sends generic error response
     res.sendError = (code, errPrivate, errPublic) => {

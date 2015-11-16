@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>jsop.io</title>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/systemjs/0.18.4/system.js"></script>
+  <script src="assets/js/jsop.bundle.min.js"></script>
+  <script>
+    window.run = function(BENCHSPEC, CALLBACK){
+      var root = typeof global == "object" && global || this;
+
+      // expect benchmark test to be set
+      // as globally declared variable:
+      // var BENCHMARK_JSON = 'https://jsop.io/api/test/example';
+
+      var spec = BENCHSPEC.benchmark;
+      var deps = spec.dependencies;
+
+      // import benchmark dependencies
+      var imports = [];
+      for (var i = 0; i < deps.length; i++) {
+        imports.push(System.import(deps[i].src));
+      }
+
+      // once all imports are loaded,
+      // setup and run benchmark test.
+      Promise.all(imports).then(function(modules) {
+
+        // make module deps globally available
+        for (var i = 0; i < deps.length; i++){
+          if (modules[i]) root[deps[i].var] = modules[i];
+        }
+
+        // setup benchmark test
+        var benchsuite = window.benchsuite = new Benchmark.Suite();
+
+        // add test setup/teardown from spec
+        Benchmark.prototype.setup = spec.js_setup;
+        Benchmark.prototype.teardown = spec.js_teardown;
+
+        // collect added testcases
+        var testcases = [];
+        benchsuite.on('add', function(ev){ testcases.push(ev.target); });
+
+        // add testcases from spec
+        for (var i = 0; i < spec.cases.length; i++){
+          benchsuite.add(
+
+            // test case name
+            spec.cases[i].label,
+
+            // test case js code
+            spec.cases[i].js_code,
+
+            { // test case options and listners
+              defer: spec.cases[i].is_async,
+
+              onStart: function(){
+                console.log('-----------------------------------');
+                console.log('Starting testcase: "' + this.name + '"');
+              },
+              onError: function(){
+                if (this.error) console.log('Testcase error: "' + this.error + '"');
+              },
+              onComplete: function(){
+                if (this.aborted) console.log('Testcase aborted.');
+                else console.log('Testcase finished: ' + String(this));
+              }
+            }
+          );
+        }
+
+        // note test platform
+        console.log('-----------------------------------');
+        console.log('Your platform is:');
+        console.log(Benchmark.platform);
+
+        // run!
+        console.log('-----------------------------------');
+        console.log('Starting benchmark tests!');
+
+        // collect test reults
+        benchsuite.on('complete', function(){
+
+          // compile complete resultspec
+          var result = {
+            id: BENCHSPEC.id,
+            platform: Benchmark.platform,
+            cases: []
+          };
+
+          for (var i = 0; i < spec.cases.length; i++){
+            var tc = testcases[i];
+
+            result.cases.push({
+              id: spec.cases[i].id,
+              count: tc.count,
+              cycles: tc.cycles,
+              aborted: tc.aborted,
+              error: tc.error,
+              hz: tc.hz,
+              stats: tc.stats,
+              times: tc.times
+            });
+          }
+
+          CALLBACK(result);
+        });
+
+        benchsuite.length ? benchsuite.run({
+          'async': true,
+          'queued': true
+        }) : benchsuite.emit('complete');
+
+      });
+    };
+  </script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
+</head>
+<body>
+  <button id="run">Run Benchmark</button>
+  <button id="clear">Clear Benchmark</button>
+  <button id="save">Save Benchmark</button>
+  <p>
+    <label>Load Benchmark: <input name="benchspecid" placeholder="example" /></label>
+    <button id="load">Load</button>
+  </p>
+  <pre><code></code></pre>
+  <hr />
+  <div id="edit"></div>
+
+  <script id="bspecform" type="text/template">
+    <ul>
+      <li><label>Title: <input class="attr" name="title" value="<%- title %>"/></label></li>
+      <li><label>Description: <textarea class="attr" name="description_md"><%- description_md %></textarea></label></li>
+      <li>
+        <strong>Libaries:</strong>
+        <ul class="dep-list"><% _.each(benchmark.dependencies, function(dep, idx){ %>
+          <li>
+            <%- dep.name %>(<%- dep.version %>)
+            [<a href="<%= dep.src %>">src</a>]
+            ==> <strong>var <%- dep.var %></strong>
+            <button data-idx="<%- idx %>" class="rmv-dep">-</button>
+          </li>
+        <% }) %></ul>
+      </li>
+      <li><fieldset><ul>
+        <li><legend>Add Library</legend></li>
+        <li><label>Name: <input name="dep-name" /></label></li>
+        <li><label>Version: <input name="dep-version" /></label></li>
+        <li><label>URL: <input name="dep-src" /></label></li>
+        <li><label>Var: <input name="dep-var" /></label></li>
+        <li><button class="add-dep">+</button></li>
+      </ul></fieldset></li>
+      <li><label>HTML: <textarea class="attr" name="html_code"><%- benchmark.html_code %></textarea></label></li>
+      <li><label>JS Setup: <textarea class="attr" name="js_setup"><%- benchmark.js_setup %></textarea></label></li>
+      <li><label>JS Teardown: <textarea class="attr" name="js_teardown"><%- benchmark.js_teardown %></textarea></label></li>
+      <li>
+        <strong>Test Cases:</strong>
+        <ul class="case-list"><% _.each(benchmark.cases, function(c, idx){ %>
+          <li>
+            <p><strong><%- c.label %></strong>: <%- c.note_md %></p>
+            <pre><%- c.js_code %></pre>
+            <span><%= c.is_async ? "async":"" %>,
+              <%= c.is_default ? "default":"" %>,
+              <%= c.is_archived ? "archived":"" %>
+            </span>
+            <button data-idx="<%- idx %>" class="rmv-case">-</button>
+          </li>
+        <% }) %></ul>
+      </li>
+      <li><fieldset><ul>
+        <li><legend>Add Test Case</legend></li>
+        <li><label>Label: <input name="case-label" /></label></li>
+        <li><label>Notes: <input name="case-note_md" /></label></li>
+        <li><label>JS: <textarea name="case-js_code"></textarea></label></li>
+        <li><label>Is Async: <input type="checkbox" name="case-is_async" /></label></li>
+        <li><label>Is Default: <input type="checkbox" name="case-is_default" /></label></li>
+        <li><label>Is Archived<input type="checkbox" name="case-is_archived" /></label></li>
+        <li><button class="add-case">+</button></li>
+      </ul></fieldset></li>
+    </ul>
+  </script>
+  <script>
+    var BENCHSPEC = {id: "", title: "", description_md: "", benchmark:{
+      dependencies: [],
+      cases: [],
+    }};
+
+    // add run listnser
+    document.querySelector('#run').addEventListener('click', function(ev){
+      var runDOM = ev.currentTarget;
+      if (runDOM.running){
+        runDOM.running = false;
+        runDOM.innerText = 'Run Benchmark';
+        window.benchsuite.abort();
+      }
+      else {
+        runDOM.running = true;
+        run(BENCHSPEC, function(results) {
+          runDOM.running = false;
+          runDOM.innerText = 'Run Benchmark';
+          console.log('---- final results ----');
+          console.log(JSON.stringify(results, null, 2));
+        });
+        runDOM.innerText = 'Abort Benchmark';
+      }
+    });
+
+    // add clear listnser
+    document.querySelector('#clear').addEventListener('click', function(){
+      BENCHSPEC = {id: "", title: "", description_md: "", benchmark:{
+        dependencies: [],
+        cases: [],
+      }};
+      document.querySelector('[name="benchspecid"]').value = '';
+      render();
+    });
+
+    // add load listnser
+    document.querySelector('#load').addEventListener('click', function(ev){
+      var loadDOM = ev.currentTarget;
+      var bspecid = document.querySelector('[name="benchspecid"]').value;
+
+      if (loadDOM.fetching) return; // do nothing
+
+      loadDOM.fetching = true;
+      loadDOM.innerText = 'Fetching...';
+      fetch('/api/benchmark/'+bspecid)
+        .then(function(res){
+          if (res.status >= 400) throw "asdf";
+          return res.json();
+        })
+        .then(function(json){
+          if (json) {
+            loadDOM.fetching = false;
+            loadDOM.innerText = 'Load';
+            BENCHSPEC = json;
+            render();
+          }
+        })
+        .catch(function(err){
+          loadDOM.fetching = false;
+          loadDOM.innerText = 'Failed!';
+        });
+    });
+
+    // add save listnser
+    document.querySelector('#save').addEventListener('click', function(ev){
+      var saveDOM = ev.currentTarget;
+
+      if (saveDOM.saving) return; // do nothing
+
+      saveDOM.saving = true;
+      saveDOM.innerText = 'Saving...';
+      fetch('/api/benchmark/' + (BENCHSPEC.id  || ''), {
+          method: BENCHSPEC.id ? "PUT" : "POST",
+          headers: (function(){
+            var h = new Headers();
+            h.append("Content-Type", "application/json");
+            return h;
+          })(),
+          body: JSON.stringify(BENCHSPEC)
+        })
+        .then(function(res){
+          saveDOM.saving = false;
+          saveDOM.innerText = (res.status < 400) ? 'Saved!' : 'Failed to save!';
+          return res.status < 400 && res.json();
+        })
+        .then(function(json){
+          if (json && typeof json.error == 'undefined') {
+            BENCHSPEC = json;
+            render();
+            // document.querySelector('[name="benchspecid"]').value = json.id;
+            // document.querySelector('#load').click();
+          }
+        })
+        .catch(function(err){
+          console.log(err);
+          saveDOM.saving = false;
+          saveDOM.innerText = 'Failed to save!';
+        });
+    });
+
+
+    // add update listners
+    var listen = function(){
+      _.invoke(document.querySelectorAll('[name="title"],[name="description_md"]'),
+        'addEventListener', 'change', function(ev){
+          var attr = ev.currentTarget.name;
+          var val = ev.currentTarget.value;
+          BENCHSPEC[attr] = val;
+          render();
+      });
+      _.invoke(document.querySelectorAll('[name="html_code"],[name="js_setup"],[name="js_teardown"]'),
+        'addEventListener', 'change', function(ev){
+          var attr = ev.currentTarget.name;
+          var val = ev.currentTarget.value;
+          BENCHSPEC.benchmark[attr] = val;
+          render();
+      });
+      document.querySelector('.add-dep').addEventListener('click', function(){
+        var dep = {
+          name: document.querySelector('[name="dep-name"]').value,
+          version: document.querySelector('[name="dep-version"]').value,
+          src: document.querySelector('[name="dep-src"]').value,
+          var: document.querySelector('[name="dep-var"]').value
+        };
+        BENCHSPEC.benchmark.dependencies.push(dep);
+        render();
+      });
+      document.querySelector('.add-case').addEventListener('click', function(){
+        var testcase = {
+          label: document.querySelector('[name="case-label"]').value,
+          note_md: document.querySelector('[name="case-note_md"]').value,
+          js_code: document.querySelector('[name="case-js_code"]').value,
+          is_async: document.querySelector('[name="case-is_async"]').checked,
+          is_default: document.querySelector('[name="case-is_default"]').checked,
+          is_archived: document.querySelector('[name="case-is_archived"]').checked
+        };
+        BENCHSPEC.benchmark.cases.push(testcase);
+        render();
+      });
+      _.invoke((document.querySelectorAll('.rmv-dep') || []),
+        'addEventListener', 'click', function(ev){
+        var idx = ev.currentTarget.dataset.idx;
+        var deps = BENCHSPEC.benchmark.dependencies;
+        BENCHSPEC.benchmark.dependencies = _.without(deps, deps[idx]);
+        render();
+      });
+      _.invoke((document.querySelectorAll('.rmv-case') || []),
+        'addEventListener', 'click', function(ev){
+        var idx = ev.currentTarget.dataset.idx;
+        var cases = BENCHSPEC.benchmark.cases;
+        BENCHSPEC.benchmark.cases = _.without(cases, cases[idx]);
+        render();
+      });
+    };
+
+    // render final benchspec and edit form
+    var render = function() {
+      var tpl = document.querySelector('#bspecform').innerHTML;
+      document.querySelector('code').innerText = JSON.stringify(BENCHSPEC, null, 2);
+      document.querySelector('#edit').innerHTML = _.template(tpl)(BENCHSPEC);
+      listen();
+    };
+
+    // reset page on load
+    document.querySelector('#clear').click();
+
+  </script>
+</body>
+</html>
