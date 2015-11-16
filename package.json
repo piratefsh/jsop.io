@@ -39,6 +39,7 @@
     "express-session": "^1.12.0",
     "ioredis": "^1.10.0",
     "lodash": "^3.10.1",
-    "superagent": "^1.4.0"
+    "superagent": "^1.4.0",
+    "validator": "^4.2.1"
   }
 }
