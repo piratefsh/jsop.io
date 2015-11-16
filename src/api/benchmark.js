@@ -1,12 +1,12 @@
 'use strict';
 const benchmark = module.exports = require('express').Router();
-const benchspecValidate = require('./../../assert/benchspec');
+const bspecValidate = require('./../../assert/benchspec');
 const _ = require('lodash');
 const fs = require('fs');
 
 // validate create/update of benchmark test spec
 const valBenchspec = (req, res, next) => {
-  let benchspec = req.json || false;
+  let benchspec = req.body || false;
   let benchspecID = (req.benchspec || {}).id || false;
 
   try {
@@ -37,6 +37,11 @@ const valBenchspec = (req, res, next) => {
       throw 'Benchspec ID mismatch';
     }
 
+    // do general input sanitization
+    console.log(benchspec.title);
+    benchspec.title = (benchspec.title || '').trim()
+      .replace(/\s+/g, ' '); // force single-whitespaces
+    console.log(benchspec.title);
     // do general input validations
     var valErrors = bspecValidate(benchspec);
     if (valErrors) { throw {error: valErrors}; }
@@ -50,6 +55,7 @@ const valBenchspec = (req, res, next) => {
     return next('route');
   }
 
+  req.body = benchspec;
   return next();
 };
 
@@ -86,7 +92,7 @@ const loadBenchspec = (req, res, next, bspec) => {
 
   // lookup from local file cache
   fs.readFile(
-    'cache/tests/' + bspec + '.json',
+    'cache/benchspecs/' + bspec + '.json',
     'utf8',
     (err, data) => {
 
@@ -105,17 +111,17 @@ const loadBenchspec = (req, res, next, bspec) => {
 // save/update benchmark spec
 const saveBenchspec = (req, res, next) => {
   const redis = req.app.locals.redis || false;
-  const benchspec = req.json || false;
+  const benchspec = req.body || false;
   let bspecID = req.params.bspec || false;
 
   // sanity check
   if (benchspec == false) {
-    throw new Error('cannot save benchspec: req.json missing');
+    throw new Error('cannot save benchspec: req.body missing');
   }
 
   // generate ID for new benchspec
   if (bspecID == false) {
-    bspecID = benchspec.title.toLowerCase()
+    bspecID = benchspec.id = benchspec.title.toLowerCase()
               .replace(/\s/gm, '-')
               .replace(/[^\d\w-]/gm, '');
   }
@@ -132,28 +138,25 @@ const saveBenchspec = (req, res, next) => {
     // todo...
   }
 
-  req.benchspec = benchspec;
-  return next();
+  // req.benchspec = benchspec;
+  // return next();
 
   // save to local file cache
-  fs.saveFile(
-    'cache/tests/' + bspecID + '.json',
+  fs.writeFile(
+    'cache/benchspecs/' + bspecID + '.json',
+    JSON.stringify(benchspec),
     'utf8',
-    (err, data) => {
+    (err) => {
 
       // todo: err handling?
-      // if (err) {}
-
-      try { req.benchspec = JSON.parse(data); }
-      catch (e) {}
-
+      if (err) {} else { req.benchspec = benchspec; }
       return next();
     });
 };
 
 // validate benchmark test result
 const valBenchspecRes = (req, res, next) => {
-  const benchspecRes = req.json || false;
+  const benchspecRes = req.body || false;
 
   try {
 
@@ -285,7 +288,7 @@ benchmark.get('/run/:bspec', (req, res) => {
 // save new benchmark test spec
 benchmark.post('/api/benchmark',
   valBenchspec, saveBenchspec, (req, res) =>
-  res.redirect('/api/benchmark/' + req.benchspec.id));
+  res.json(req.benchspec));
 
 benchmark.route('/api/benchmark/:bspec?')
 

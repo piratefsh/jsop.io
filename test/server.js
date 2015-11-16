@@ -341,7 +341,7 @@ describe('jsop.io (oauth-gh enabled)', () => {
 
 describe('assert benchspec', () => {
   const benchspec = require('../assert/benchspec');
-  const example = require('../cache/tests/example');
+  const example = require('../cache/benchspecs/example');
 
   it('validates successfully', () => {
     assert.equal(benchspec(example));
