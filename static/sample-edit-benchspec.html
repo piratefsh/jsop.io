@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>jsop.io</title>
-  
+
   <link href="styles.css" rel="stylesheet"/>
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/systemjs/0.18.4/system.js"></script>
@@ -12,23 +11,39 @@
   <script src="assets/scripts/jsop.bundle.min.js"></script>
 </head>
 <body>
-  <button id="run">Run Benchmark</button>
-  <button id="clear">Clear Benchmark</button>
-  <button id="save">Save Benchmark</button>
-  <p>
-    <label>Load Benchmark: <input name="benchspecid" placeholder="example" /></label>
-    <button id="load">Load</button>
-  </p>
-  <pre><code></code></pre>
-  <hr />
-  <div id="edit"></div>
 
-  <script id="bspecform" type="text/template">
+  <div class="container">
+    <h1>Edit Benchspec</h1>
+    <section class="control">
+      <div class="btn-group">
+        <button id="run" class="btn btn-primary" >Run Benchmark</button>
+        <button id="clear" class="btn btn-default" >Clear Benchmark</button>
+        <button id="save" class="btn btn-default" >Save Benchmark</button>
+      </div>
+    </section>
+
+    <section class="control">
+      <form class="form-inline">
+        <fieldset class="form-group">
+          <label class="control-label">Load Benchmark:</label>
+          <input class="form-control" name="benchspecid" placeholder="example" />
+        </fieldset>
+        <fieldset class="form-group">
+          <button id="load" class="btn btn-default">Load</button>
+        </fieldset>
+      </form>
+    </section>
+    <pre><code></code></pre>
+
+    <hr />
+
+    <div id="edit"></div>
+
+    <script id="bspecform" type="text/template">
     <ul>
       <li><label>Title: <input class="attr" name="title" value="<%- title %>"/></label></li>
       <li><label>Description: <textarea class="attr" name="description_md"><%- description_md %></textarea></label></li>
-      <li>
-        <strong>Libaries:</strong>
+      <li> <strong>Libaries:</strong>
         <ul class="dep-list"><% _.each(benchmark.dependencies, function(dep, idx){ %>
           <li>
             <%- dep.name %>(<%- dep.version %>)
@@ -57,8 +72,7 @@
             <pre><%- c.js_code %></pre>
             <span><%= c.is_async ? "async":"" %>,
               <%= c.is_default ? "default":"" %>,
-              <%= c.is_archived ? "archived":"" %>
-            </span>
+              <%= c.is_archived ? "archived":"" %></span>
             <button data-idx="<%- idx %>" class="rmv-case">-</button>
           </li>
         <% }) %></ul>
@@ -75,6 +89,7 @@
       </ul></fieldset></li>
     </ul>
   </script>
+  </div>
   <script src="bundle.js"></script>
 </body>
 </html>
