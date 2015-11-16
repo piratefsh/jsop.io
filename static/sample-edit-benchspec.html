@@ -13,18 +13,20 @@
 <body>
 
   <div class="container">
+  <div class="layout">
+  <div>
     <header>
-      <h1>Edit Benchspec</h1>
+      <h1>Benchspec</h1>
       <div class="control">
         <div class="btn-group">
-          <button id="run" class="btn btn-primary" >Run Benchmark</button>
-          <button id="clear" class="btn btn-default" >Clear Benchmark</button>
-          <button id="save" class="btn btn-default" >Save Benchmark</button>
+          <button id="run" class="btn btn-primary">Run</button>
+          <button id="clear" class="btn btn-default">Clear</button>
+          <button id="save" class="btn btn-default">Save</button>
         </div>
       </div>
 
       <div class="control">
-        <div class="form-inline">
+        <div>
           <fieldset class="form-group">
             <label class="control-label">Load Benchmark:</label>
             <input class="form-control" name="benchspecid" placeholder="example" />
@@ -37,31 +39,41 @@
       <pre><code></code></pre>
     </header>
     <hr />
+  </div>
 
+  <div>
     <h2>Edit</h2>
     <div id="edit"></div>
+  </div>
 
     <!-- Form template -->
     <script id="bspecform" type="text/template">
     
     <!-- Title and description -->
     <section>
+      <div class="form-horizontal">
       <fieldset class="form-group">
         <label class="control-label">Title:</label>
-        <input class="attr form-control" name="title" value="<%- title %>"/></fieldset>
+        <div>
+          <input class="attr form-control" name="title" value="<%- title %>"/>
+        </div>
+        </fieldset>
 
-      <fieldset>
+      <fieldset class="form-group">
         <label class="control-label">Description:</label>
-        <textarea class="attr form-control" name="description_md"><%- description_md %></textarea>
+        <div>
+          <textarea class="attr form-control" name="description_md"><%- description_md %></textarea>
+        </div>
       </fieldset>
+    </div>
     </section>
 
       <hr/>
 
       <!-- Libraries -->
     <section>
+      <h3>Libaries</h3>
       <fieldset>
-        <h3>Libaries</h3>
         <ul class="dep-list">
           <% _.each(benchmark.dependencies, function(dep, idx){ %>
           <li class="dep">
@@ -81,51 +93,57 @@
       <h4>Add Library</h4>
       <div class="form-horizontal">
         <fieldset class="form-group">
-          <label class="control-label col-sm-12 col-md-3">Name:</label>
-          <div class="col-sm-12 col-md-9">
+          <label class="control-label ">Name:</label>
+          <div>
             <input class="form-control" name="dep-name" />
           </div>
         </fieldset>
         <fieldset class="form-group">
-          <label class="control-label col-sm-12 col-md-3">Version:</label>
-          <div class="col-sm-12 col-md-9">
+          <label class="control-label ">Version:</label>
+          <div>
             <input class="form-control" name="dep-version" />
           </div>
         </fieldset>
         <fieldset class="form-group">
-          <label class="control-label col-sm-12 col-md-3">URL:</label>
-          <div class="col-sm-12 col-md-9">
+          <label class="control-label ">URL:</label>
+          <div>
             <input class="form-control" name="dep-src" />
           </div>
         </fieldset>
         <fieldset class="form-group">
-          <label class="control-label col-sm-12 col-md-3">Var:</label>
-          <div class="col-sm-12 col-md-9">
+          <label class="control-label ">Var:</label>
+          <div>
             <input class="form-control" name="dep-var" />
-            <button class="add-dep btn btn-default">+</button>
           </div>
         </fieldset>
         <fieldset class="form-group">
-          <label class="control-label col-sm-12 col-md-3">HTML:</label>
-          <div class="col-sm-12 col-md-9">
+          <div class="control-label">
+          </div>
+          <div>
+            <button class="add-dep btn btn-primary pull-right">+</button>
+          </div>
+        </fieldset>
+        <fieldset class="form-group">
+          <label class="control-label ">HTML:</label>
+          <div>
             <textarea class="attr form-control" name="html_code"><%- benchmark.html_code %></textarea>
           </div>
         </fieldset>
         <fieldset class="form-group">
-          <label class="control-label col-sm-12 col-md-3">JS Setup:</label>
-          <div class="col-sm-12 col-md-9">
+          <label class="control-label ">JS Setup:</label>
+          <div>
             <textarea class="attr form-control" name="js_setup"><%- benchmark.js_setup %></textarea>
           </div>
         </fieldset>
         <fieldset class="form-group">
-          <label class="control-label col-sm-12 col-md-3">JS Teardown:</label>
-          <div class="col-sm-12 col-md-9">
+          <label class="control-label ">JS Teardown:</label>
+          <div>
             <textarea class="attr form-control" name="js_teardown"><%- benchmark.js_teardown %></textarea>
           </div>
         </fieldset>
       </div>
     </section>
-
+    <hr/>
     <!-- Test Cases -->
     <section>
       <h3>Test Cases</h3>
@@ -149,26 +167,26 @@
       <h4>Add Test Case</h4>
       <div class="form-horizontal">
         <fieldset class="form-group">
-          <label class="control-label col-sm-12 col-md-3">Label:</label>
-          <div class="col-sm-12 col-md-9">
+          <label class="control-label ">Label:</label>
+          <div>
           <input class="form-control" name="case-label" />
         </div>
         </fieldset>
         <fieldset class="form-group ">
-          <label class="control-label col-sm-12 col-md-3">Notes:</label>
-          <div class="col-sm-12 col-md-9">
+          <label class="control-label ">Notes:</label>
+          <div>
           <input class="form-control" name="case-note_md" />
         </div>
         </fieldset>
         <fieldset class="form-group">
-          <label class="control-label col-sm-12 col-md-3">JS:</label>
-          <div class="col-sm-12 col-md-9">
+          <label class="control-label ">JS:</label>
+          <div>
             <textarea class="form-control" name="case-js_code"></textarea>
           </div>
         </fieldset>
       </div>
 
-      <div class="form-inline">
+      <div class="form-inline pull-right">
         <fieldset class="form-group">
           <input class="form-control" type="checkbox" name="case-is_async" />
           <label class="control-label">async</label>
@@ -181,7 +199,7 @@
           <input class="form-control" type="checkbox" name="case-is_archived" />
           <label class="control-label">archived</label>
         </fieldset>
-        <fieldset class="form-group  pull-right">
+        <fieldset class="form-group ">
           <button class="add-case btn btn-primary">+</button>
         </fieldset>
       </div>

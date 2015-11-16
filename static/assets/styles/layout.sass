@@ -2,11 +2,19 @@ $space: 20px
 
 .container
     margin: 0 auto
-    width: 700px
+
+.layout 
+    display: flex
+    > div
+        flex: 2
+        &:first-child
+            flex: 1
+            margin-right: $space*2
 .control
     margin: $space 0px
 
 .dep-list
+    margin: $space 0px
     .dep
         padding: $space/2
 .case-list
@@ -22,9 +30,13 @@ $space: 20px
 
 .form-horizontal
     .form-group
-        label 
+        .control-label 
             @extend .col-sm-12
-            @extend .col-md-8
-        input, textarea
+            @extend .col-md-3
+        > div
             @extend .col-sm-12
-            @extend .col-md-4
+            @extend .col-md-9
+
+#edit 
+    section 
+        margin: $space 0px
