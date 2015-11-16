@@ -145,7 +145,7 @@ describe('jsop.io (default)', () => {
               assert(benchmark.cases instanceof Array);
               assert(benchmark.cases.length > 0);
 
-              for (var i = 0; i < benchmark.cases.length; i++){
+              for (var i = 0; i < benchmark.cases.length; i++) {
                 var testcase = benchmark.cases[i];
                 assert.equal(typeof testcase, 'object');
                 assert.equal(typeof testcase.label, 'string');
@@ -187,7 +187,7 @@ describe('jsop.io (default)', () => {
               assert.equal(typeof summary.count, 'number');
               assert(summary.cases instanceof Array);
 
-              for (var i = 0; i < summary.cases.length; i++){
+              for (var i = 0; i < summary.cases.length; i++) {
                 var testcase = summary.cases[i];
                 assert.equal(typeof testcase, 'object');
                 assert.equal(typeof testcase.id, 'string');
@@ -199,7 +199,7 @@ describe('jsop.io (default)', () => {
 
               var platforms = res.body.platforms;
               assert(platforms instanceof Array);
-              for (var i = 0; i < platforms.length; i++){
+              for (var i = 0; i < platforms.length; i++) {
                 var platform = platforms[i];
                 assert.equal(typeof platform, 'object');
                 assert.equal(typeof platform.name, 'string');
@@ -207,7 +207,7 @@ describe('jsop.io (default)', () => {
                 assert.equal(typeof platform.summary.count, 'number');
                 assert(platform.summary.cases instanceof Array);
 
-                for (var j = 0; j < platform.summary.cases.length; j++){
+                for (var j = 0; j < platform.summary.cases.length; j++) {
                   var testcase = platform.summary.cases[i];
                   assert.equal(typeof testcase, 'object');
                   assert.equal(typeof testcase.id, 'string');
@@ -226,7 +226,7 @@ describe('jsop.io (default)', () => {
                   assert.equal(res.body.id, 'example');
                   assert(res.body.results instanceof Array);
 
-                  for (var i = 0; i < res.body.results.length; i++){
+                  for (var i = 0; i < res.body.results.length; i++) {
                     var result = res.body.results[i];
                     assert.equal(typeof result, 'object');
                     assert.equal(typeof result.platform, 'object');
@@ -235,7 +235,7 @@ describe('jsop.io (default)', () => {
                     assert(result.cases instanceof Array);
                     assert(result.cases.length > 0);
 
-                    for (var j = 0; j < result.cases.length; j++){
+                    for (var j = 0; j < result.cases.length; j++) {
                       var testcase = result.cases[i];
                       assert.equal(typeof testcase, 'object');
                       assert.equal(typeof testcase.id, 'string');
@@ -336,5 +336,14 @@ describe('jsop.io (oauth-gh enabled)', () => {
             )
         );
     });
+  });
+});
+
+describe('assert benchspec', () => {
+  const benchspec = require('../assert/benchspec');
+  const example = require('../cache/tests/example');
+
+  it('validates successfully', () => {
+    assert.equal(benchspec(example));
   });
 });
