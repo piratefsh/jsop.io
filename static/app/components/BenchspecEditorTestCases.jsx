@@ -37,17 +37,18 @@ export default React.createClass({
 
   // generate list of test cases
   testCases(cases){
-    let nodes = cases.map(function(c, i){
+    let nodes = cases.map((c, i) => {
       return (
         <li className="case" key={c.id}> <strong>{ c.label } : </strong>
           { c.note_md }
           <pre>{ c.js_code }</pre>
           <div>
             { c.is_async ? "async":"" }
-                { c.is_default ? "default":"" }
-                { c.is_archived ? "archived":"" }
+            { c.is_default ? "default":"" }
+            { c.is_archived ? "archived":"" }
             <button 
               data-idx={i} 
+              onClick={this.handleOnDelete}
               className="rmv-case btn btn-danger pull-right">-</button>
           </div>
         </li>
