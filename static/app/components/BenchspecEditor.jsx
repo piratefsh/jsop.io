@@ -147,8 +147,8 @@ export default React.createClass({
           <h2>Edit</h2>
           <BenchspecEditorMetadata benchspec={this.state.benchspec}/><hr/>
           <BenchspecEditorDependencies onAdd={this.addDependency} benchmark={this.state.benchspec.benchmark}/><hr/>
-          <BenchspecEditorSetupTeardown onChange={this.updateSetupTeardown} benchmark={this.state.benchspec.benchmark}/><hr/>
-          <BenchspecEditorTestCases onAdd={this.addTestCase} benchmark={this.state.benchspec.benchmark}/>
+          <BenchspecEditorTestCases onAdd={this.addTestCase} benchmark={this.state.benchspec.benchmark}/><hr/>
+          <BenchspecEditorSetupTeardown onChange={this.updateSetupTeardown} benchmark={this.state.benchspec.benchmark}/>
         </div>
       </div>
     )

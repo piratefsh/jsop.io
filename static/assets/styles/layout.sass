@@ -21,13 +21,17 @@ $space: 20px
 .case-list
     padding: 0px 
     margin: $space 0px
+    &:after
+        clear: both
+        content: ''
+        display: block
     .case
         display: block 
         margin: $space 0px
 
 .form-horizontal
     margin: $space 0px
-     
+
 .form-inline 
     .form-group
         &:not(:last-child)
