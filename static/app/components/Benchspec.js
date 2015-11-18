@@ -1,3 +1,5 @@
+// Set up Benchspec
+
 export default function(BENCHSPEC, CALLBACK) {
   var root = typeof global == 'object' && global || this;
 
