@@ -14,7 +14,7 @@ export default React.createClass({
       benchspec: {
         id: "",
         title: "",
-        description_html: "",
+        description_md: "",
         benchmark: {
           cases: [],
           dependencies: []
@@ -109,6 +109,21 @@ export default React.createClass({
       });
   },
 
+  // handle any input change from user
+  updateTitle: function(event) {
+    this.setState((state) => {
+      state.benchspec.title = event.target.value.trim()
+      return state
+    });
+  },
+
+  updateDescription: function(){
+    this.setState((state) => {
+      state.benchspec.description_md = event.target.value.trim()
+      return state
+    });
+  },
+
   // add new test case
   addTestCase(testCase){
     this.setState((state) => {
@@ -166,7 +181,9 @@ export default React.createClass({
         <div>
           <h2>Edit</h2>
           <BenchspecEditorMetadata 
-            benchspec={this.state.benchspec}/><hr/>
+            benchspec={this.state.benchspec}
+            updateTitle={this.updateTitle}
+            updateDescription={this.updateDescription}/><hr/>
 
           <BenchspecEditorDependencies 
             onAdd={this.addDependency} 
