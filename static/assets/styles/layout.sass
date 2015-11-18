@@ -19,7 +19,7 @@ $space: 20px
     padding-left: 0px
     list-style-type: none 
     li
-        padding: $space/2
+        padding: $space/2 0px
         > div 
             vertical-align: middle
             display: inline-block
@@ -46,6 +46,13 @@ $space: 20px
     .form-group
         &:not(:last-child)
             margin-right: $space
+.form-new 
+    background-color: #eee
+    @extend .well
+    &:after
+        clear: both
+        content: ''
+        display: block
 
 .checkbox
     input

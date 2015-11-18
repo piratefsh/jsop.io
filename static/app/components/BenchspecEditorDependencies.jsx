@@ -50,7 +50,8 @@ export default React.createClass({
   render() {
     const formClassNames = classNames({
       'hidden': this.state.hideForm,
-      'form-horizontal': true
+      'form-horizontal': true,
+      'form-new' : true
     })
 
     return (
@@ -59,6 +60,7 @@ export default React.createClass({
         <ul className="dep-list">{this.dependencyList(this.props.benchmark.dependencies)}</ul>
 
         <div className={formClassNames}>
+          <h4>New Dependency</h4>
           <fieldset className="form-group">
             <label className="control-label">Name</label>
             <div>

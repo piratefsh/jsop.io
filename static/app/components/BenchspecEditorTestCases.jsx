@@ -51,7 +51,8 @@ export default React.createClass({
 
   render() {
     const formClassNames = classNames({
-      'hidden': this.state.hideForm
+      'hidden': this.state.hideForm,
+      'form-new': true
     })
 
     return (
@@ -60,6 +61,7 @@ export default React.createClass({
         <ul className="case-list">{this.testCases(this.props.benchmark.cases)}</ul>
         <div className={formClassNames}>
           <div className='form-horizontal'>
+          <h4>New Test Case</h4>
             <fieldset className="form-group">
               <label className="control-label">Label</label>
               <div>
