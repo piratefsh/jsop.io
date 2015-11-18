@@ -1,37 +1,49 @@
 import _ from 'lodash';
 
 import React from 'react'
-import ReactDOM from 'react-dom'
 import BenchspecEditor from './BenchspecEditor'
-import BenchspecSetup from './BenchspecSetup'
+import Benchspec from './Benchspec'
 
-window.run = BenchspecSetup;
+export default React.createClass({
 
-export default {
-  setCallbacks(){
+  getInitialState(){
+    return {
+      benchspec: {
+        title: "",
+        description: "",
+        benchmark: {
+          cases: [],
+          dependencies: []
+        }
+      }
+    }
+  },
+
+  // Run benchspec
+  run(ev){
+    var runDOM = ev.currentTarget;
+    if (runDOM.running) {
+      runDOM.running = false;
+      runDOM.innerText = 'Run Benchmark';
+      window.benchsuite.abort();
+    } else {
+      runDOM.running = true;
+      Benchspec(this.state.benchspec, function(results) {
+        runDOM.running = false;
+        runDOM.innerText = 'Run Benchmark';
+        console.log('---- final results ----');
+        console.log(JSON.stringify(results, null, 2));
+      });
+      runDOM.innerText = 'Abort Benchmark';
+    }
+  },
+  
+  componentDidLoad(){
       var BENCHSPEC = {id: '', title: '', description_md: '', benchmark: {
         dependencies: [],
         cases: [],
       }};
 
-      // add run listnser
-      document.querySelector('#run').addEventListener('click', function(ev) {
-        var runDOM = ev.currentTarget;
-        if (runDOM.running) {
-          runDOM.running = false;
-          runDOM.innerText = 'Run Benchmark';
-          window.benchsuite.abort();
-        } else {
-          runDOM.running = true;
-          run(BENCHSPEC, function(results) {
-            runDOM.running = false;
-            runDOM.innerText = 'Run Benchmark';
-            console.log('---- final results ----');
-            console.log(JSON.stringify(results, null, 2));
-          });
-          runDOM.innerText = 'Abort Benchmark';
-        }
-      });
 
       // add clear listnser
       document.querySelector('#clear').addEventListener('click', function() {
@@ -141,11 +153,7 @@ export default {
       document.querySelector('#clear').click();
   },
 
-  init(){
-    ReactDOM.render(
-        <BenchspecEditor />,
-        document.getElementById('main')
-    )
-    this.setCallbacks()
+  render(){
+    return (<BenchspecEditor benchspec={this.state.benchspec} onBenchspecRun={this.run}/>)
   }
-}
+})

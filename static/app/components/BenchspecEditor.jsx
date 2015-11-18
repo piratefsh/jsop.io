@@ -3,17 +3,9 @@ import BenchspecEditorLibraries from './BenchspecEditorLibraries';
 import BenchspecEditorTestCases from './BenchspecEditorTestCases';
 
 export default React.createClass({
+
     getInitialState(){
-      return {
-        benchspec: {
-          title: "",
-          description: "",
-          benchmark: {
-            cases: [],
-            dependencies: []
-          }
-        }
-      }
+        return this.props
     },
 
     loadBenchspec(ev) {
@@ -48,7 +40,7 @@ export default React.createClass({
                 <h1>Benchspec</h1>
                 <div className="control">
                   <div className="btn-group">
-                    <button id="run" className="btn btn-primary">Run</button>
+                    <button className="btn btn-primary" onClick={this.props.onBenchspecRun}>Run</button>
                     <button id="clear" className="btn btn-default">Clear</button>
                     <button id="save" className="btn btn-default">Save</button>
                   </div>

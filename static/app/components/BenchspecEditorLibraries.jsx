@@ -3,7 +3,7 @@ import React from 'react';
 export default React.createClass({
     libraryList(libraries){
         let nodes = libraries.map((dep, i) => {
-            return (<li className="dep" key={dep.id}>
+            return (<li className="dep" key={dep.var}>
                 {dep.name} ({dep.version}) <a href={dep.src}>src</a> ==>
                 <strong>var {dep.var}</strong>
                 <button data-idx={i} className="rmv-dep btn btn-danger pull-right">-</button>
