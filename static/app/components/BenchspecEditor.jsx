@@ -64,7 +64,7 @@ export default React.createClass({
         }
       })
       .catch((err) => {
-        console.errorx(err)
+        console.error(err)
         loadDOM.innerText = 'Failed!';
       });
   },
@@ -109,6 +109,7 @@ export default React.createClass({
       });
   },
 
+  // add new test case
   addTestCase(testCase){
     this.setState((state) => {
       const cases = state.benchspec.benchmark.cases
@@ -117,10 +118,29 @@ export default React.createClass({
     })
   },
 
+  // delete test case at index
+  deleteTestCase(i){
+    this.setState((state) => {
+      const cases = state.benchspec.benchmark.cases
+      cases.splice(i, 1)
+      return state
+    })
+  },
+
+  // add new dependency
   addDependency(dependency){
     this.setState((state) => {
       const dependencies = state.benchspec.benchmark.dependencies
       state.benchspec.benchmark.dependencies = dependencies.concat(dependency)
+      return state
+    })
+  },
+
+  // delete dependency at index
+  deleteDependency(i){
+    this.setState((state) => {
+      const deps = state.benchspec.benchmark.dependencies
+      deps.splice(i, 1)
       return state
     })
   },
@@ -145,10 +165,22 @@ export default React.createClass({
         </div>
         <div>
           <h2>Edit</h2>
-          <BenchspecEditorMetadata benchspec={this.state.benchspec}/><hr/>
-          <BenchspecEditorDependencies onAdd={this.addDependency} benchmark={this.state.benchspec.benchmark}/><hr/>
-          <BenchspecEditorTestCases onAdd={this.addTestCase} benchmark={this.state.benchspec.benchmark}/><hr/>
-          <BenchspecEditorSetupTeardown onChange={this.updateSetupTeardown} benchmark={this.state.benchspec.benchmark}/>
+          <BenchspecEditorMetadata 
+            benchspec={this.state.benchspec}/><hr/>
+
+          <BenchspecEditorDependencies 
+            onAdd={this.addDependency} 
+            onDelete={this.deleteDependency}
+            benchmark={this.state.benchspec.benchmark}/><hr/>
+
+          <BenchspecEditorTestCases 
+            onAdd={this.addTestCase} 
+            onDelete={this.deleteTestCase}
+            benchmark={this.state.benchspec.benchmark}/><hr/>
+
+          <BenchspecEditorSetupTeardown 
+            onChange={this.updateSetupTeardown} 
+            benchmark={this.state.benchspec.benchmark}/>
         </div>
       </div>
     )

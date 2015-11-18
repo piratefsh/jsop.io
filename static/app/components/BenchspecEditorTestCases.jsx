@@ -30,6 +30,11 @@ export default React.createClass({
     this.props.onAdd(values)
   },
 
+  handleOnDelete(ev){
+    const id = ev.target.getAttribute('data-idx')
+    this.props.onDelete(id)
+  },
+
   // generate list of test cases
   testCases(cases){
     let nodes = cases.map(function(c, i){
@@ -41,7 +46,9 @@ export default React.createClass({
             { c.is_async ? "async":"" }
                 { c.is_default ? "default":"" }
                 { c.is_archived ? "archived":"" }
-            <button data-idx="{ idx }" className="rmv-case btn btn-danger pull-right">-</button>
+            <button 
+              data-idx={i} 
+              className="rmv-case btn btn-danger pull-right">-</button>
           </div>
         </li>
         )

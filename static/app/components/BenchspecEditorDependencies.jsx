@@ -28,6 +28,11 @@ export default React.createClass({
     this.props.onAdd(values)
   },
 
+  handleOnDelete(ev){
+    const id = ev.target.getAttribute('data-idx')
+    this.props.onDelete(id)
+  },
+
   toggleFormState(){
     this.setState({hideForm: !this.state.hideForm})
   },
@@ -40,7 +45,10 @@ export default React.createClass({
           <div>
             <strong>var {dep.var}</strong> = {dep.name} ({dep.version}) <a href={dep.src}>src</a>
           </div>
-          <button data-idx={i} className="rmv-dep btn btn-danger pull-right">-</button>
+          <button 
+            data-idx={i} 
+            onClick={this.handleOnDelete} 
+            className="rmv-dep btn btn-danger pull-right">-</button>
         </li>
         )
     });
