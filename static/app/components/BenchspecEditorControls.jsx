@@ -1,7 +1,6 @@
 import React from 'react';
 
 export default React.createClass({
-  displayName: 'BenchspecEditorMetadata',
 
   handleLoadBenchspec(ev){
     ev.preventDefault();

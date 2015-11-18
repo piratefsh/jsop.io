@@ -1,8 +1,7 @@
 import React from 'react';
 
 export default React.createClass({
-  displayName: 'BenchspecEditorMetadata',
-
+  
   render() {
     return (
       <section>
@@ -24,5 +23,4 @@ export default React.createClass({
       </section>
       )
   }
-
 })

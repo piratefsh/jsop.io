@@ -1,6 +1,8 @@
 import React from 'react';
 
 export default React.createClass({
+  
+  // generate list of test cases
   testCases(cases){
     let nodes = cases.map(function(c, i){
       return (
@@ -16,7 +18,6 @@ export default React.createClass({
         </li>
         )
     })
-
     return nodes
   },
 
