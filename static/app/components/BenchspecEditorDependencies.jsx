@@ -37,8 +37,9 @@ export default React.createClass({
     let nodes = dependencies.map((dep, i) => {
       return (
         <li className="dep" key={dep.var}>
-          {dep.name} ({dep.version}) <a href={dep.src}>src</a> ==>
-          <strong>var {dep.var}</strong>
+          <div>
+            <strong>var {dep.var}</strong> = {dep.name} ({dep.version}) <a href={dep.src}>src</a>
+          </div>
           <button data-idx={i} className="rmv-dep btn btn-danger pull-right">-</button>
         </li>
         )

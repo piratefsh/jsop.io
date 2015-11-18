@@ -16,8 +16,18 @@ $space: 20px
 
 .dep-list
     margin: $space 0px
-    .dep
+    padding-left: 0px
+    list-style-type: none 
+    li
         padding: $space/2
+        > div 
+            vertical-align: middle
+            display: inline-block
+        &:after 
+            clear: both
+            content: ''
+            display: block
+
 .case-list
     padding: 0px 
     margin: $space 0px
@@ -25,7 +35,7 @@ $space: 20px
         clear: both
         content: ''
         display: block
-    .case
+    li
         display: block 
         margin: $space 0px
 
