@@ -1,6 +1,14 @@
 import React from 'react';
+import classNames from 'classnames';
 
 export default React.createClass({
+
+  getInitialState() {
+    return {
+      hideForm: true
+    }
+  },
+
   // get dependency to be added
   handleOnAdd(){
     const values = {
@@ -20,6 +28,10 @@ export default React.createClass({
     this.props.onAdd(values)
   },
 
+  toggleFormState(){
+    this.setState({hideForm: !this.state.hideForm})
+  },
+
   // generate list of dependencies
   dependencyList(dependencies){
     let nodes = dependencies.map((dep, i) => {
@@ -35,13 +47,17 @@ export default React.createClass({
   },
 
   render() {
+    const formClassNames = classNames({
+      'hidden': this.state.hideForm,
+      'form-horizontal': true
+    })
+
     return (
       <section>
         <h3>Dependencies</h3>
         <ul className="dep-list">{this.dependencyList(this.props.benchmark.dependencies)}</ul>
 
-        <h4>Add Dependency</h4>
-        <div className="form-horizontal">
+        <div className={formClassNames}>
           <fieldset className="form-group">
             <label className="control-label">Name</label>
             <div>
@@ -69,10 +85,14 @@ export default React.createClass({
           <fieldset className="form-group">
             <div className="control-label"></div>
             <div>
-              <button className="add-dep btn btn-primary pull-right" onClick={this.handleOnAdd}>+</button>
+              <button className="add-dep btn btn-primary pull-right" onClick={this.handleOnAdd}>Add</button>
             </div>
           </fieldset>
         </div>
+
+        <button className="btn btn-default" onClick={this.toggleFormState}>
+          {this.state.hideForm ? 'Add Dependency' : 'Hide'}
+        </button>
       </section>
     )
   }
