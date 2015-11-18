@@ -98,7 +98,8 @@ export default function(BENCHSPEC, CALLBACK) {
         });
       }
 
-      CALLBACK(result);
+      //// set up way to return promise to runner
+      return result;
     });
 
     benchsuite.length ? benchsuite.run({

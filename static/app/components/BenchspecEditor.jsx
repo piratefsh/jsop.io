@@ -70,7 +70,7 @@ export default React.createClass({
   },
 
   clearBenchspec(ev){
-    this.setState(this.getInitialState())
+    this.replaceState(this.getInitialState())
   },
 
   saveBenchspec(ev){
@@ -125,6 +125,13 @@ export default React.createClass({
     })
   },
 
+  updateSetupTeardown(updated){
+    this.setState((state) => {
+      Object.assign(state.benchspec.benchmark, updated)
+      return state
+    })
+  },
+
   render() {
     return (
       <div className="layout">
@@ -138,12 +145,9 @@ export default React.createClass({
         </div>
         <div>
           <h2>Edit</h2>
-          <BenchspecEditorMetadata benchspec={this.state.benchspec}/>
-          <hr/>
-          <BenchspecEditorDependencies onAdd={this.addDependency} benchmark={this.state.benchspec.benchmark}/>
-          <hr/>
-          <BenchspecEditorSetupTeardown benchmark={this.state.benchspec}/>
-          <hr/>
+          <BenchspecEditorMetadata benchspec={this.state.benchspec}/><hr/>
+          <BenchspecEditorDependencies onAdd={this.addDependency} benchmark={this.state.benchspec.benchmark}/><hr/>
+          <BenchspecEditorSetupTeardown onChange={this.updateSetupTeardown} benchmark={this.state.benchspec.benchmark}/><hr/>
           <BenchspecEditorTestCases onAdd={this.addTestCase} benchmark={this.state.benchspec.benchmark}/>
         </div>
       </div>
