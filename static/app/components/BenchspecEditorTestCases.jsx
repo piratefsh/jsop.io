@@ -1,18 +1,31 @@
 import React from 'react';
 
 export default React.createClass({
-  
+  handleOnAdd(){
+    const values = {
+      id: Date.now() //temp id before sent to server
+    }
+
+    for (let ref in this.refs){
+      const elem = this.refs[ref]
+      const val = elem.type == 'checkbox' ? elem.checked : elem.value.trim()
+      values[ref] = val
+    }
+    
+    this.props.onAdd(values)
+  },
+
   // generate list of test cases
   testCases(cases){
     let nodes = cases.map(function(c, i){
       return (
-        <li className="case" key={c.id}> <strong>{ c.label } :</strong>
+        <li className="case" key={c.id}> <strong>{ c.label } : </strong>
           { c.note_md }
           <pre>{ c.js_code }</pre>
           <div>
-            { c.is_async ?"async":"" }
-                { c.is_default ?"default":"" }
-                { c.is_archived ?"archived":"" }
+            { c.is_async ? "async":"" }
+                { c.is_default ? "default":"" }
+                { c.is_archived ? "archived":"" }
             <button data-idx="{ idx }" className="rmv-case btn btn-danger pull-right">-</button>
           </div>
         </li>
@@ -31,38 +44,44 @@ export default React.createClass({
         <fieldset className="form-group">
           <label className="control-label">Label:</label>
           <div>
-            <input className="form-control" name="case-label" />
+            <input className="form-control" name="case-label" ref="label"/>
           </div>
         </fieldset>
         <fieldset className="form-group">
           <label className="control-label">Notes:</label>
           <div>
-            <input className="form-control" name="case-note_md" />
+            <input className="form-control" name="case-note_md" ref="note_md"/>
           </div>
         </fieldset>
         <fieldset className="form-group">
           <label className="control-label">JS:</label>
           <div>
-            <textarea className="form-control" name="case-js_code"></textarea>
+            <textarea className="form-control" name="case-js_code" ref="js_code"></textarea>
           </div>
         </fieldset>
       </div>
 
       <div className="form-inline pull-right">
         <fieldset className="form-group">
-          <input className="form-control" type="checkbox" name="case-is_async" />
-          <label className="control-label">async</label>
+          <label className="control-label">
+            <input className="form-control" type="checkbox" name="case-is_async" ref="is_async"/>
+            async
+          </label>
         </fieldset>
         <fieldset className="form-group">
-          <input className="form-control" type="checkbox" name="case-is_default" />
-          <label className="control-label">default</label>
+          <label className="control-label">
+            <input className="form-control" type="checkbox" name="case-is_default" ref="is_default"/>
+            default
+          </label>
         </fieldset>
         <fieldset className="form-group">
-          <input className="form-control" type="checkbox" name="case-is_archived" />
-          <label className="control-label">archived</label>
+          <label className="control-label">
+            <input className="form-control" type="checkbox" name="case-is_archived" ref="is_archived"/>
+            archived
+          </label>
         </fieldset>
         <fieldset className="form-group">
-          <button className="add-case btn btn-primary">+</button>
+          <button className="add-case btn btn-primary" onClick={this.handleOnAdd}>+</button>
         </fieldset>
       </div>
       </section>

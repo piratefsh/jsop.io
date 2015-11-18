@@ -108,6 +108,15 @@ export default React.createClass({
       });
   },
 
+  addTestCase(testCase){
+    this.setState((state) => {
+      const cases = state.benchspec.benchmark.cases
+      console.log(cases)
+      state.benchspec.benchmark.cases = cases.concat(testCase)
+      return state
+    })
+  },
+
   render() {
     return (
       <div className="layout">
@@ -124,7 +133,7 @@ export default React.createClass({
           <h2>Edit</h2>
           <BenchspecEditorMetadata benchspec={this.state.benchspec}/>
           <BenchspecEditorDependencies benchmark={this.state.benchspec.benchmark}/>
-          <BenchspecEditorTestCases benchmark={this.state.benchspec.benchmark}/>
+          <BenchspecEditorTestCases onAdd={this.addTestCase} benchmark={this.state.benchspec.benchmark}/>
         </div>
       </div>
     )
