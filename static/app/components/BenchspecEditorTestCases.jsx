@@ -1,6 +1,7 @@
 import React from 'react';
 
 export default React.createClass({
+  // get testcase to be added
   handleOnAdd(){
     const values = {
       id: Date.now() //temp id before sent to server
@@ -11,7 +12,7 @@ export default React.createClass({
       const val = elem.type == 'checkbox' ? elem.checked : elem.value.trim()
       values[ref] = val
     }
-    
+
     this.props.onAdd(values)
   },
 
@@ -63,22 +64,28 @@ export default React.createClass({
 
       <div className="form-inline pull-right">
         <fieldset className="form-group">
-          <label className="control-label">
-            <input className="form-control" type="checkbox" name="case-is_async" ref="is_async"/>
-            async
-          </label>
+          <div className="checkbox">
+            <label>
+              <input type="checkbox" name="case-is_async" ref="is_async"/>
+              async
+            </label>
+          </div>
         </fieldset>
         <fieldset className="form-group">
-          <label className="control-label">
-            <input className="form-control" type="checkbox" name="case-is_default" ref="is_default"/>
-            default
-          </label>
+          <div className="checkbox">
+            <label>
+              <input type="checkbox" name="case-is_default" ref="is_default"/>
+              default
+            </label>
+          </div>
         </fieldset>
         <fieldset className="form-group">
-          <label className="control-label">
-            <input className="form-control" type="checkbox" name="case-is_archived" ref="is_archived"/>
-            archived
-          </label>
+          <div className="checkbox">
+            <label>
+              <input type="checkbox" name="case-is_archived" ref="is_archived"/>
+              archived
+            </label>
+          </div>
         </fieldset>
         <fieldset className="form-group">
           <button className="add-case btn btn-primary" onClick={this.handleOnAdd}>+</button>

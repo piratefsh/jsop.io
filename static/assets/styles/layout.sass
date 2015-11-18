@@ -4,6 +4,7 @@ $space: 20px
     margin: 0 auto
 
 .layout 
+    margin-bottom: $space*2
     display: flex
     > div
         flex: 2
@@ -28,6 +29,12 @@ $space: 20px
     .form-group
         &:not(:last-child)
             margin-right: $space
+
+.checkbox
+    input
+        margin-right: $space/3
+    span 
+        font-weight: bold
 
 .form-horizontal
     .form-group

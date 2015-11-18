@@ -2,6 +2,7 @@ import React from 'react';
 import BenchspecRunner from './BenchspecRunner'
 import BenchspecEditorControls from './BenchspecEditorControls';
 import BenchspecEditorMetadata from './BenchspecEditorMetadata';
+import BenchspecEditorSetupTeardown from './BenchspecEditorSetupTeardown';
 import BenchspecEditorDependencies from './BenchspecEditorDependencies';
 import BenchspecEditorTestCases from './BenchspecEditorTestCases';
 
@@ -111,8 +112,15 @@ export default React.createClass({
   addTestCase(testCase){
     this.setState((state) => {
       const cases = state.benchspec.benchmark.cases
-      console.log(cases)
       state.benchspec.benchmark.cases = cases.concat(testCase)
+      return state
+    })
+  },
+
+  addDependency(dependency){
+    this.setState((state) => {
+      const dependencies = state.benchspec.benchmark.dependencies
+      state.benchspec.benchmark.dependencies = dependencies.concat(dependency)
       return state
     })
   },
@@ -127,12 +135,15 @@ export default React.createClass({
             saveBenchspec={this.saveBenchspec}
             clearBenchspec={this.clearBenchspec}
             loadBenchspec={this.loadBenchspec}/>
-          <hr />
         </div>
         <div>
           <h2>Edit</h2>
           <BenchspecEditorMetadata benchspec={this.state.benchspec}/>
-          <BenchspecEditorDependencies benchmark={this.state.benchspec.benchmark}/>
+          <hr/>
+          <BenchspecEditorDependencies onAdd={this.addDependency} benchmark={this.state.benchspec.benchmark}/>
+          <hr/>
+          <BenchspecEditorSetupTeardown benchmark={this.state.benchspec}/>
+          <hr/>
           <BenchspecEditorTestCases onAdd={this.addTestCase} benchmark={this.state.benchspec.benchmark}/>
         </div>
       </div>

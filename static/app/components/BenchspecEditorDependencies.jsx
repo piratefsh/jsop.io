@@ -1,6 +1,20 @@
 import React from 'react';
 
 export default React.createClass({
+  // get dependency to be added
+  handleOnAdd(){
+    const values = {
+      id: Date.now() //temp id before sent to server
+    }
+
+    for (let ref in this.refs){
+      const elem = this.refs[ref]
+      const val = elem.value.trim()
+      values[ref] = val
+    }
+    
+    this.props.onAdd(values)
+  },
 
   // generate list of dependencies
   dependencyList(dependencies){
@@ -20,58 +34,38 @@ export default React.createClass({
     return (
       <section>
         <h3>Dependencies</h3>
-        <fieldset>
-          <ul className="dep-list">{this.dependencyList(this.props.benchmark.dependencies)}</ul>
-        </fieldset>
+        <ul className="dep-list">{this.dependencyList(this.props.benchmark.dependencies)}</ul>
 
         <h4>Add Dependency</h4>
         <div className="form-horizontal">
           <fieldset className="form-group">
             <label className="control-label ">Name:</label>
             <div>
-              <input className="form-control" name="dep-name" />
+              <input className="form-control" name="dep-name" ref="name"/>
             </div>
           </fieldset>
           <fieldset className="form-group">
             <label className="control-label ">Version:</label>
             <div>
-              <input className="form-control" name="dep-version" />
+              <input className="form-control" name="dep-version" ref="version"/>
             </div>
           </fieldset>
           <fieldset className="form-group">
             <label className="control-label ">URL:</label>
             <div>
-              <input className="form-control" name="dep-src" />
+              <input className="form-control" name="dep-src" ref="src"/>
             </div>
           </fieldset>
           <fieldset className="form-group">
             <label className="control-label ">Var:</label>
             <div>
-              <input className="form-control" name="dep-var" />
+              <input className="form-control" name="dep-var" ref="var"/>
             </div>
           </fieldset>
           <fieldset className="form-group">
             <div className="control-label"></div>
             <div>
               <button className="add-dep btn btn-primary pull-right">+</button>
-            </div>
-          </fieldset>
-          <fieldset className="form-group">
-            <label className="control-label">HTML:</label>
-            <div>
-              <textarea className="attr form-control" name="html_code" defaultValue={this.props.benchmark.html_code}></textarea>
-            </div>
-          </fieldset>
-          <fieldset className="form-group">
-            <label className="control-label">JS Setup:</label>
-            <div>
-              <textarea className="attr form-control" name="js_setup" defaultValue={this.props.benchmark.js_setup}></textarea>
-            </div>
-          </fieldset>
-          <fieldset className="form-group">
-            <label className="control-label">JS Teardown:</label>
-            <div>
-              <textarea className="attr form-control" name="js_teardown" defaultValue={this.props.benchmark.js_teardown}></textarea>
             </div>
           </fieldset>
         </div>
