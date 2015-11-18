@@ -60,7 +60,7 @@ module.exports = {
             'node_modules',
             'static'
         ],
-        extensions: ['.js', '.json', '']
+        extensions: ['.js', '.jsx', '.json', '']
     },
     plugins: [
         new ExtractTextPlugin('styles.css')
