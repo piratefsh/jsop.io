@@ -1,21 +1,57 @@
 import React from 'react';
-import BenchspecEditorLibraries from './BenchspecEditorLibraries';
+import BenchspecRunner from './BenchspecRunner'
+import BenchspecEditorControls from './BenchspecEditorControls';
+import BenchspecEditorMetadata from './BenchspecEditorMetadata';
+import BenchspecEditorDependencies from './BenchspecEditorDependencies';
 import BenchspecEditorTestCases from './BenchspecEditorTestCases';
 
 export default React.createClass({
 
     getInitialState(){
-        return this.props
+      return {
+        uri: 'https://127.0.0.1:8443',
+        benchspec: {
+          id: "",
+          title: "",
+          description_html: "",
+          benchmark: {
+            cases: [],
+            dependencies: []
+          }
+        }
+      }
     },
 
-    loadBenchspec(ev) {
-      ev.preventDefault()
+    runBenchspec(ev){
+      var runDOM = ev.currentTarget;
+
+      if (runDOM.running) {
+        runDOM.running = false;
+        runDOM.innerText = 'Run Benchmark';
+
+        window.benchsuite.abort();
+      } else {
+        runDOM.running = true;
+        runDOM.innerText = 'Abort Benchmark';
+
+        BenchspecRunner.run(this.state.benchspec)
+          .then((results) => {
+            runDOM.running = false;
+            runDOM.innerText = 'Run Benchmark';
+            console.log('---- final results ----');
+            console.log(JSON.stringify(results, null, 2));
+        })
+      }
+    },
+
+    loadBenchspec(benchSpecId, ev) {
       var loadDOM = ev.currentTarget;
 
-      loadDOM.innerText = 'Fetching...';
+      loadDOM.innerText = 'Loading...';
 
-      const uri = 'https://127.0.0.1:8443/api/benchmark/' + this.refs.benchSpecId.value.trim();
-      fetch(uri)
+      const loadUri = `${this.state.uri}/api/benchmark/${benchSpecId}`;
+      
+      fetch(loadUri)
         .then((res) => {
           if (res.status >= 400) throw 'Failed to Load';
           return res.json();
@@ -32,56 +68,62 @@ export default React.createClass({
         });
     },
 
+    clearBenchspec(ev){
+      this.setState(this.getInitialState())
+    },
+
+    saveBenchspec(ev){
+      var saveDOM = ev.currentTarget;
+
+      if (saveDOM.saving) return; // do nothing
+
+      saveDOM.saving = true;
+      saveDOM.innerText = 'Saving...';
+
+      const saveUri = `${this.state.uri}/api/benchmark/${this.state.benchspec.id || ''}`;
+
+      fetch(saveUri, {
+          method: this.state.benchspec.id ? 'PUT' : 'POST',
+          headers: (function() {
+            var h = new Headers();
+            h.append('Content-Type', 'application/json');
+            return h;
+          })(),
+          body: JSON.stringify(this.state.benchspec)
+        })
+        .then(function(res) {
+          saveDOM.saving = false;
+          saveDOM.innerText = (res.status < 400) ? 'Saved!' : 'Failed to save!';
+          return res.status < 400 && res.json();
+        })
+        .then(function(json) {
+          if (json && typeof json.error == 'undefined') {
+            this.setState({benchspec: json})
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+          saveDOM.saving = false;
+          saveDOM.innerText = 'Failed to save!';
+        });
+    },
+
     render() {
         return (
           <div className="layout">
             <div>
-              <header>
-                <h1>Benchspec</h1>
-                <div className="control">
-                  <div className="btn-group">
-                    <button className="btn btn-primary" onClick={this.props.onBenchspecRun}>Run</button>
-                    <button id="clear" className="btn btn-default">Clear</button>
-                    <button id="save" className="btn btn-default">Save</button>
-                  </div>
-                </div>
-
-                <div className="control">
-                  <form >
-                    <fieldset className="form-group">
-                      <label className="control-label">Load Benchmark:</label>
-                      <input className="form-control" name="benchspecid" placeholder="example" ref="benchSpecId" defaultValue="example"/>
-                    </fieldset>
-                    <fieldset className="form-group">
-                      <button id="load" className="btn btn-default" onClick={this.loadBenchspec} >Load</button>
-                    </fieldset>
-                  </form>
-                </div>
-                <pre><code>{JSON.stringify(this.state.benchspec, null, 2)}</code></pre>
-              </header>
+              <BenchspecEditorControls 
+                benchspec={this.state.benchspec}
+                runBenchspec={this.runBenchspec}
+                saveBenchspec={this.saveBenchspec}
+                clearBenchspec={this.clearBenchspec}
+                loadBenchspec={this.loadBenchspec}/>
               <hr />
             </div>
             <div>
               <h2>Edit</h2>
-              <section>
-                <div className="form-horizontal">
-                <fieldset className="form-group">
-                  <label className="control-label">Title:</label>
-                  <div>
-                    <input className="attr form-control" name="title" value={this.state.benchspec.title}/>
-                  </div>
-                  </fieldset>
-
-                <fieldset className="form-group">
-                  <label className="control-label">Description:</label>
-                  <div>
-                    <textarea className="attr form-control" name="description_md" value={this.state.benchspec.description_html}></textarea>
-                  </div>
-                </fieldset>
-                </div>
-              </section>
-
-              <BenchspecEditorLibraries benchmark={this.state.benchspec.benchmark}/>
+              <BenchspecEditorMetadata benchspec={this.state.benchspec}/>
+              <BenchspecEditorDependencies benchmark={this.state.benchspec.benchmark}/>
               <BenchspecEditorTestCases benchmark={this.state.benchspec.benchmark}/>
             </div>
           </div>

@@ -13,7 +13,6 @@ export default React.createClass({
     },
 
     render() {
-        console.log('render deps')
         return (
             <section>
               <h3>Libraries</h3>
