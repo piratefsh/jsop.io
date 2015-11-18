@@ -43,19 +43,19 @@ export default React.createClass({
       <h4>Add Test Case</h4>
       <div className="form-horizontal">
         <fieldset className="form-group">
-          <label className="control-label">Label:</label>
+          <label className="control-label">Label</label>
           <div>
             <input className="form-control" name="case-label" ref="label"/>
           </div>
         </fieldset>
         <fieldset className="form-group">
-          <label className="control-label">Notes:</label>
+          <label className="control-label">Notes</label>
           <div>
             <input className="form-control" name="case-note_md" ref="note_md"/>
           </div>
         </fieldset>
         <fieldset className="form-group">
-          <label className="control-label">JS:</label>
+          <label className="control-label">JS</label>
           <div>
             <textarea className="form-control" name="case-js_code" ref="js_code"></textarea>
           </div>
