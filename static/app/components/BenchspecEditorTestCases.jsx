@@ -1,5 +1,9 @@
 import React from 'react';
-import classNames from 'classnames'
+import classNames from 'classnames';
+import AceEditor from 'react-ace';
+import brace from 'brace'
+import javascipt from 'brace/mode/javascript';
+import theme from 'brace/theme/github';
 
 export default React.createClass({
   getInitialState() {
@@ -20,7 +24,18 @@ export default React.createClass({
 
     for (let ref in this.refs){
       const elem = this.refs[ref]
-      const val = elem.type == 'checkbox' ? elem.checked : elem.value.trim()
+
+      let val = ""
+
+      if(elem.type == 'checkbox'){
+        val = elem.checked
+      }
+      else if('editor' in elem){
+        val = elem.editor.getValue()
+      }
+      else{
+        val = elem.value.trim()
+      }
       values[ref] = val
 
       // clear field
@@ -85,7 +100,14 @@ export default React.createClass({
             <fieldset className="form-group">
               <label className="control-label">JS</label>
               <div>
-                <textarea className="form-control" name="case-js_code" ref="js_code"></textarea>
+               <AceEditor
+                  className="ace-editor"
+                  mode="javascript"
+                  theme="github"
+                  name="case-js_code"
+                  ref="js_code"
+                  editorProps={{$blockScrolling: true}}
+                />
               </div>
             </fieldset>
           </div>
