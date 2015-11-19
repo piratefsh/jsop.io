@@ -59,7 +59,7 @@ export default React.createClass({
             <button
               data-idx={i}
               onClick={this.handleOnDelete}
-              className='rmv-case btn btn-danger pull-right'><i className="fa fa-trash-o"></i></button>
+              className='rmv-case btn btn-default pull-right'><i className="fa fa-trash-o"></i></button>
           </div>
         </li>
         );
@@ -131,7 +131,7 @@ export default React.createClass({
               </div>
             </fieldset>
             <fieldset className='form-group'>
-              <button className='add-case btn btn-primary' onClick={this.handleOnAdd}>+</button>
+            <button className='add-case btn btn-primary' onClick={this.handleOnAdd}>Add</button>
             </fieldset>
           </div>
         </div>

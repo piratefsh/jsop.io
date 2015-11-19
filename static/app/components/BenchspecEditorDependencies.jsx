@@ -48,7 +48,9 @@ export default React.createClass({
           <button
             data-idx={i}
             onClick={this.handleOnDelete}
-            className='rmv-dep btn btn-danger pull-right'>-</button>
+            className='rmv-dep btn btn-default pull-right'>
+            <i className="fa fa-trash-o"></i>
+          </button>
         </li>
         );
     });
