@@ -6,7 +6,7 @@ export default {
   // Run benchspec
   run(benchspec){
     return new Promise((resolve, reject) => {
-      Benchspec(benchspec)
+      Benchspec(benchspec, resolve)
     });
   },
 

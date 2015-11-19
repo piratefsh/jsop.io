@@ -99,7 +99,7 @@ export default function(BENCHSPEC, CALLBACK) {
       }
 
       //// set up way to return promise to runner
-      return result;
+      CALLBACK(result);
     });
 
     benchsuite.length ? benchsuite.run({
