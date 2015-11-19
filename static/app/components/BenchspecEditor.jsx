@@ -1,5 +1,5 @@
 import React from 'react';
-import BenchspecRunner from './BenchspecRunner'
+import BenchspecRunner from './BenchspecRunner';
 import BenchspecEditorControls from './BenchspecEditorControls';
 import BenchspecEditorMetadata from './BenchspecEditorMetadata';
 import BenchspecEditorSetupTeardown from './BenchspecEditorSetupTeardown';
@@ -8,22 +8,22 @@ import BenchspecEditorTestCases from './BenchspecEditorTestCases';
 
 export default React.createClass({
 
-  getInitialState(){
+  getInitialState() {
     return {
       uri: 'https://127.0.0.1:8443',
       benchspec: {
-        id: "",
-        title: "",
-        description_md: "",
+        id: '',
+        title: '',
+        description_md: '',
         benchmark: {
           cases: [],
           dependencies: []
         }
       }
-    }
+    };
   },
 
-  runBenchspec(ev){
+  runBenchspec(ev) {
     var runDOM = ev.currentTarget;
 
     if (runDOM.running) {
@@ -41,7 +41,7 @@ export default React.createClass({
           runDOM.innerText = 'Run Benchmark';
           console.log('---- final results ----');
           console.log(JSON.stringify(results, null, 2));
-      })
+        });
     }
   },
 
@@ -51,7 +51,7 @@ export default React.createClass({
     loadDOM.innerText = 'Loading...';
 
     const loadUri = `${this.state.uri}/api/benchmark/${benchSpecId}`;
-    
+
     fetch(loadUri)
       .then((res) => {
         if (res.status >= 400) throw 'Failed to Load';
@@ -60,20 +60,20 @@ export default React.createClass({
       .then((json) => {
         if (json) {
           loadDOM.innerText = 'Load';
-          this.setState({benchspec: json})
+          this.setState({benchspec: json});
         }
       })
       .catch((err) => {
-        console.error(err)
+        console.error(err);
         loadDOM.innerText = 'Failed!';
       });
   },
 
-  clearBenchspec(ev){
-    this.replaceState(this.getInitialState())
+  clearBenchspec(ev) {
+    this.replaceState(this.getInitialState());
   },
 
-  saveBenchspec(ev){
+  saveBenchspec(ev) {
     var saveDOM = ev.currentTarget;
 
     if (saveDOM.saving) return; // do nothing
@@ -99,7 +99,7 @@ export default React.createClass({
       })
       .then((json) => {
         if (json && typeof json.error == 'undefined') {
-          this.setState({benchspec: json})
+          this.setState({benchspec: json});
         }
       })
       .catch((err) => {
@@ -112,66 +112,66 @@ export default React.createClass({
   // handle any input change from user
   updateTitle: function(event) {
     this.setState((state) => {
-      state.benchspec.title = event.target.value.trim()
-      return state
+      state.benchspec.title = event.target.value.trim();
+      return state;
     });
   },
 
-  updateDescription: function(){
+  updateDescription: function() {
     this.setState((state) => {
-      state.benchspec.description_md = event.target.value.trim()
-      return state
+      state.benchspec.description_md = event.target.value.trim();
+      return state;
     });
   },
 
   // add new test case
-  addTestCase(testCase){
+  addTestCase(testCase) {
     this.setState((state) => {
-      const cases = state.benchspec.benchmark.cases
-      state.benchspec.benchmark.cases = cases.concat(testCase)
-      return state
-    })
+      const cases = state.benchspec.benchmark.cases;
+      state.benchspec.benchmark.cases = cases.concat(testCase);
+      return state;
+    });
   },
 
   // delete test case at index
-  deleteTestCase(i){
+  deleteTestCase(i) {
     this.setState((state) => {
-      const cases = state.benchspec.benchmark.cases
-      cases.splice(i, 1)
-      return state
-    })
+      const cases = state.benchspec.benchmark.cases;
+      cases.splice(i, 1);
+      return state;
+    });
   },
 
   // add new dependency
-  addDependency(dependency){
+  addDependency(dependency) {
     this.setState((state) => {
-      const dependencies = state.benchspec.benchmark.dependencies
-      state.benchspec.benchmark.dependencies = dependencies.concat(dependency)
-      return state
-    })
+      const dependencies = state.benchspec.benchmark.dependencies;
+      state.benchspec.benchmark.dependencies = dependencies.concat(dependency);
+      return state;
+    });
   },
 
   // delete dependency at index
-  deleteDependency(i){
+  deleteDependency(i) {
     this.setState((state) => {
-      const deps = state.benchspec.benchmark.dependencies
-      deps.splice(i, 1)
-      return state
-    })
+      const deps = state.benchspec.benchmark.dependencies;
+      deps.splice(i, 1);
+      return state;
+    });
   },
 
-  updateSetupTeardown(updated){
+  updateSetupTeardown(updated) {
     this.setState((state) => {
-      Object.assign(state.benchspec.benchmark, updated)
-      return state
-    })
+      Object.assign(state.benchspec.benchmark, updated);
+      return state;
+    });
   },
 
   render() {
     return (
-      <div className="layout">
+      <div className='layout'>
         <div>
-          <BenchspecEditorControls 
+          <BenchspecEditorControls
             benchspec={this.state.benchspec}
             runBenchspec={this.runBenchspec}
             saveBenchspec={this.saveBenchspec}
@@ -180,26 +180,26 @@ export default React.createClass({
         </div>
         <div>
           <h2>Edit</h2>
-          <BenchspecEditorMetadata 
+          <BenchspecEditorMetadata
             benchspec={this.state.benchspec}
             updateTitle={this.updateTitle}
             updateDescription={this.updateDescription}/><hr/>
 
-          <BenchspecEditorDependencies 
-            onAdd={this.addDependency} 
+          <BenchspecEditorDependencies
+            onAdd={this.addDependency}
             onDelete={this.deleteDependency}
             benchmark={this.state.benchspec.benchmark}/><hr/>
 
-          <BenchspecEditorTestCases 
-            onAdd={this.addTestCase} 
+          <BenchspecEditorTestCases
+            onAdd={this.addTestCase}
             onDelete={this.deleteTestCase}
             benchmark={this.state.benchspec.benchmark}/><hr/>
 
-          <BenchspecEditorSetupTeardown 
-            onChange={this.updateSetupTeardown} 
+          <BenchspecEditorSetupTeardown
+            onChange={this.updateSetupTeardown}
             benchmark={this.state.benchspec.benchmark}/>
         </div>
       </div>
-    )
+    );
   }
-})
+});
