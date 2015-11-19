@@ -85,24 +85,24 @@ export default React.createClass({
 
     fetch(saveUri, {
         method: this.state.benchspec.id ? 'PUT' : 'POST',
-        headers: (function() {
+        headers: (() => {
           var h = new Headers();
           h.append('Content-Type', 'application/json');
           return h;
         })(),
         body: JSON.stringify(this.state.benchspec)
       })
-      .then(function(res) {
+      .then((res) => {
         saveDOM.saving = false;
         saveDOM.innerText = (res.status < 400) ? 'Saved!' : 'Failed to save!';
         return res.status < 400 && res.json();
       })
-      .then(function(json) {
+      .then((json) => {
         if (json && typeof json.error == 'undefined') {
           this.setState({benchspec: json})
         }
       })
-      .catch(function(err) {
+      .catch((err) => {
         console.log(err);
         saveDOM.saving = false;
         saveDOM.innerText = 'Failed to save!';
