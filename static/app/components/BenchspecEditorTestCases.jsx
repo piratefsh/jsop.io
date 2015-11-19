@@ -1,9 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import AceEditor from 'react-ace';
-import brace from 'brace';
-import javascipt from 'brace/mode/javascript';
-import theme from 'brace/theme/github';
+import JavascriptCodeEditor from './JavascriptCodeEditor';
 
 export default React.createClass({
   getInitialState() {
@@ -29,8 +26,8 @@ export default React.createClass({
 
       if (elem.type == 'checkbox') {
         val = elem.checked;
-      } else if ('editor' in elem) {
-        val = elem.editor.getValue();
+      } else if ('getEditor' in elem) {
+        val = elem.getEditor().getValue();
       } else {
         val = elem.value.trim();
       }
@@ -98,13 +95,11 @@ export default React.createClass({
             <fieldset className='form-group'>
               <label className='control-label'>JS</label>
               <div>
-               <AceEditor
-                  className='ace-editor'
-                  mode='javascript'
-                  theme='github'
+               <JavascriptCodeEditor
+                  className='js-editor'
                   name='case-js_code'
                   ref='js_code'
-                  editorProps={{$blockScrolling: true}}
+                  refName='js_code'
                 />
               </div>
             </fieldset>
@@ -140,6 +135,8 @@ export default React.createClass({
             </fieldset>
           </div>
         </div>
+        <button className="btn btn-default" onClick={this.toggleFormState}>{this.state.hideForm ? 'Add Test Case' : 'Hide'}</button>
+
       </section>
     );
   }
