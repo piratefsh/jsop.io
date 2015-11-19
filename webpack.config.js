@@ -1,5 +1,5 @@
 var path = require('path'),
-    ExtractTextPlugin = require('extract-text-webpack-plugin')
+    ExtractTextPlugin = require('extract-text-webpack-plugin'),
 
 module.exports = {
     entry: {
@@ -11,6 +11,11 @@ module.exports = {
         filename: 'bundle.js'
     },
     module: {
+        noParse: [
+            // Suppress warnings and errors logged by benchmark.js when bundled using webpack.
+            // https://github.com/bestiejs/benchmark.js/issues/106
+            path.resolve(__dirname, './node_modules/benchmark/benchmark.js')
+        ],
         loaders: [
             // Babel loader
             {

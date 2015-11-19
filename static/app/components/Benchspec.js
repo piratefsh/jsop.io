@@ -1,3 +1,5 @@
+import Benchmark from 'benchmark/benchmark.js'
+
 // Set up Benchspec
 
 export default function(BENCHSPEC, CALLBACK) {

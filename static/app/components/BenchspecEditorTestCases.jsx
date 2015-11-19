@@ -62,7 +62,7 @@ export default React.createClass({
             <button
               data-idx={i}
               onClick={this.handleOnDelete}
-              className='rmv-case btn btn-danger pull-right'>-</button>
+              className='rmv-case btn btn-danger pull-right'><i className="fa fa-trash-o"></i></button>
           </div>
         </li>
         );
@@ -140,8 +140,6 @@ export default React.createClass({
             </fieldset>
           </div>
         </div>
-        
-                                                                                                                                                                                                                                                                <button className='btn btn-default' onClick={this.toggleFormState}>{this.state.hideForm ? 'Add Test Case' : 'Hide'}</button>
       </section>
     );
   }
