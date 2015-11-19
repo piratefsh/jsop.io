@@ -1,3 +1,4 @@
+import Platform from 'platform'
 import Benchmark from 'benchmark/benchmark.js'
 
 // Set up Benchspec
@@ -69,7 +70,7 @@ export default function(BENCHSPEC, CALLBACK) {
     // note test platform
     console.log('-----------------------------------');
     console.log('Your platform is:');
-    console.log(Benchmark.platform);
+    console.log(Platform);
 
     // run!
     console.log('-----------------------------------');
