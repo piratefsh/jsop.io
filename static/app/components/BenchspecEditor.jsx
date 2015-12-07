@@ -119,7 +119,7 @@ export default React.createClass({
 
   updateDescription: function() {
     this.setState((state) => {
-      state.benchspec.description_md = event.target.value.trim();
+      state.benchspec.description_md = event.target.value;
       return state;
     });
   },
