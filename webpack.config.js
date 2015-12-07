@@ -1,5 +1,5 @@
 var path = require('path'),
-    ExtractTextPlugin = require('extract-text-webpack-plugin'),
+    ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 module.exports = {
     entry: {
